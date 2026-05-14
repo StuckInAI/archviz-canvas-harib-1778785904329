@@ -11,7 +11,7 @@ export interface ProjectData {
 
 const STORAGE_KEY = 'eduarch3d_projects';
 
-function getAll(): ProjectData[] {
+function getAllProjects(): ProjectData[] {
   try {
     const raw = localStorage.getItem(STORAGE_KEY);
     if (!raw) return [];
@@ -21,30 +21,30 @@ function getAll(): ProjectData[] {
   }
 }
 
-function saveAll(projects: ProjectData[]) {
+function setAllProjects(projects: ProjectData[]) {
   localStorage.setItem(STORAGE_KEY, JSON.stringify(projects));
 }
 
-export function listProjects(): ProjectData[] {
-  return getAll().sort((a, b) => new Date(b.updatedAt).getTime() - new Date(a.updatedAt).getTime());
+export function getProjects(): ProjectData[] {
+  return getAllProjects();
 }
 
 export function getProject(id: string): ProjectData | undefined {
-  return getAll().find((p) => p.id === id);
+  return getAllProjects().find((p) => p.id === id);
 }
 
 export function saveProject(project: ProjectData) {
-  const all = getAll();
-  const idx = all.findIndex((p) => p.id === project.id);
+  const projects = getAllProjects();
+  const idx = projects.findIndex((p) => p.id === project.id);
   if (idx >= 0) {
-    all[idx] = { ...project, updatedAt: new Date().toISOString() };
+    projects[idx] = { ...project, updatedAt: new Date().toISOString() };
   } else {
-    all.push({ ...project, createdAt: new Date().toISOString(), updatedAt: new Date().toISOString() });
+    projects.push(project);
   }
-  saveAll(all);
+  setAllProjects(projects);
 }
 
 export function deleteProject(id: string) {
-  const all = getAll().filter((p) => p.id !== id);
-  saveAll(all);
+  const projects = getAllProjects().filter((p) => p.id !== id);
+  setAllProjects(projects);
 }

@@ -1,19 +1,18 @@
-import '@react-three/fiber';
-import { Object3DNode } from '@react-three/fiber';
+import { Object3DNode, MaterialNode, BufferGeometryNode } from '@react-three/fiber';
 import * as THREE from 'three';
 
 declare module '@react-three/fiber' {
   interface ThreeElements {
+    group: Object3DNode<THREE.Group, typeof THREE.Group>;
+    mesh: Object3DNode<THREE.Mesh, typeof THREE.Mesh>;
     ambientLight: Object3DNode<THREE.AmbientLight, typeof THREE.AmbientLight>;
     directionalLight: Object3DNode<THREE.DirectionalLight, typeof THREE.DirectionalLight>;
     hemisphereLight: Object3DNode<THREE.HemisphereLight, typeof THREE.HemisphereLight>;
-    mesh: Object3DNode<THREE.Mesh, typeof THREE.Mesh>;
-    group: Object3DNode<THREE.Group, typeof THREE.Group>;
     lineSegments: Object3DNode<THREE.LineSegments, typeof THREE.LineSegments>;
-    planeGeometry: Object3DNode<THREE.PlaneGeometry, typeof THREE.PlaneGeometry>;
-    boxGeometry: Object3DNode<THREE.BoxGeometry, typeof THREE.BoxGeometry>;
-    meshStandardMaterial: Object3DNode<THREE.MeshStandardMaterial, typeof THREE.MeshStandardMaterial>;
-    shadowMaterial: Object3DNode<THREE.ShadowMaterial, typeof THREE.ShadowMaterial>;
-    lineBasicMaterial: Object3DNode<THREE.LineBasicMaterial, typeof THREE.LineBasicMaterial>;
+    planeGeometry: BufferGeometryNode<THREE.PlaneGeometry, typeof THREE.PlaneGeometry>;
+    boxGeometry: BufferGeometryNode<THREE.BoxGeometry, typeof THREE.BoxGeometry>;
+    meshStandardMaterial: MaterialNode<THREE.MeshStandardMaterial, typeof THREE.MeshStandardMaterial>;
+    shadowMaterial: MaterialNode<THREE.ShadowMaterial, typeof THREE.ShadowMaterial>;
+    lineBasicMaterial: MaterialNode<THREE.LineBasicMaterial, typeof THREE.LineBasicMaterial>;
   }
 }

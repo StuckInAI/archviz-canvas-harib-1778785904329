@@ -1,9 +1,9 @@
 import { useState, useEffect } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { v4 as uuidv4 } from 'uuid';
-import { Plus, Trash2, FolderOpen, Copy } from 'lucide-react';
-import { listProjects, deleteProject, saveProject, ProjectData } from '@/lib/storage';
-import { SAMPLE_PROJECTS } from '@/lib/sampleProjects';
+import { Plus, Trash2, FolderOpen, ArrowLeft } from 'lucide-react';
+import { getProjects, saveProject, deleteProject, ProjectData } from '@/lib/storage';
+import { createSampleObjects } from '@/lib/sampleProjects';
 import styles from './DashboardPage.module.css';
 
 export default function DashboardPage() {
@@ -11,98 +11,84 @@ export default function DashboardPage() {
   const [projects, setProjects] = useState<ProjectData[]>([]);
 
   useEffect(() => {
-    setProjects(listProjects());
+    setProjects(getProjects());
   }, []);
 
   function handleNewProject() {
     const id = uuidv4();
+    const now = new Date().toISOString();
     saveProject({
       id,
       name: 'Untitled Project',
       description: '',
       objects: [],
-      createdAt: new Date().toISOString(),
-      updatedAt: new Date().toISOString(),
+      createdAt: now,
+      updatedAt: now,
     });
+    navigate(`/editor/${id}`);
+  }
+
+  function handleNewSampleProject() {
+    const id = uuidv4();
+    const now = new Date().toISOString();
+    saveProject({
+      id,
+      name: 'Sample Room',
+      description: 'A sample room with walls and furniture',
+      objects: createSampleObjects(),
+      createdAt: now,
+      updatedAt: now,
+    });
+    setProjects(getProjects());
     navigate(`/editor/${id}`);
   }
 
   function handleDelete(id: string) {
     deleteProject(id);
-    setProjects(listProjects());
-  }
-
-  function handleLoadSample(sampleIndex: number) {
-    const sample = SAMPLE_PROJECTS[sampleIndex];
-    if (!sample) return;
-    const id = uuidv4();
-    saveProject({
-      id,
-      name: sample.name,
-      description: sample.description,
-      objects: sample.objects,
-      createdAt: new Date().toISOString(),
-      updatedAt: new Date().toISOString(),
-    });
-    navigate(`/editor/${id}`);
+    setProjects(getProjects());
   }
 
   return (
     <div className={styles.page}>
-      <div className={styles.container}>
-        <div className={styles.header}>
-          <h1 className={styles.title}>🏗️ EduArch3D Dashboard</h1>
-          <button className={styles.newBtn} onClick={handleNewProject}>
-            <Plus size={18} /> New Project
-          </button>
-        </div>
+      <div className={styles.header}>
+        <button className={styles.backBtn} onClick={() => navigate('/')}>
+          <ArrowLeft size={18} /> Back
+        </button>
+        <h1 className={styles.title}>My Projects</h1>
+      </div>
 
-        {SAMPLE_PROJECTS.length > 0 && (
-          <div className={styles.section}>
-            <h2 className={styles.sectionTitle}>Sample Projects</h2>
-            <div className={styles.grid}>
-              {SAMPLE_PROJECTS.map((sample, i) => (
-                <div key={i} className={styles.card} onClick={() => handleLoadSample(i)}>
-                  <div className={styles.cardBody}>
-                    <Copy size={24} className={styles.cardIcon} />
-                    <h3 className={styles.cardTitle}>{sample.name}</h3>
-                    <p className={styles.cardDesc}>{sample.description}</p>
-                  </div>
-                </div>
-              ))}
-            </div>
-          </div>
+      <div className={styles.actions}>
+        <button className={styles.newBtn} onClick={handleNewProject}>
+          <Plus size={18} /> New Project
+        </button>
+        <button className={styles.sampleBtn} onClick={handleNewSampleProject}>
+          <FolderOpen size={18} /> Sample Project
+        </button>
+      </div>
+
+      <div className={styles.grid}>
+        {projects.length === 0 && (
+          <p className={styles.empty}>
+            No projects yet. Create a new one or try a sample project!
+          </p>
         )}
-
-        <div className={styles.section}>
-          <h2 className={styles.sectionTitle}>Your Projects</h2>
-          {projects.length === 0 ? (
-            <p className={styles.empty}>No projects yet. Create one or try a sample!</p>
-          ) : (
-            <div className={styles.grid}>
-              {projects.map((p) => (
-                <div key={p.id} className={styles.card}>
-                  <div className={styles.cardBody} onClick={() => navigate(`/editor/${p.id}`)}>
-                    <FolderOpen size={24} className={styles.cardIcon} />
-                    <h3 className={styles.cardTitle}>{p.name}</h3>
-                    <p className={styles.cardDesc}>
-                      {p.objects.length} objects • Updated {new Date(p.updatedAt).toLocaleDateString()}
-                    </p>
-                  </div>
-                  <button
-                    className={styles.deleteBtn}
-                    onClick={(e) => {
-                      e.stopPropagation();
-                      handleDelete(p.id);
-                    }}
-                  >
-                    <Trash2 size={14} />
-                  </button>
-                </div>
-              ))}
+        {projects.map((project) => (
+          <div key={project.id} className={styles.card}>
+            <div className={styles.cardBody} onClick={() => navigate(`/editor/${project.id}`)}>
+              <h3 className={styles.cardTitle}>{project.name}</h3>
+              <p className={styles.cardMeta}>
+                {project.objects.length} objects • Updated {new Date(project.updatedAt).toLocaleDateString()}
+              </p>
             </div>
-          )}
-        </div>
+            <button
+              className={styles.deleteBtn}
+              onClick={() => handleDelete(project.id)}
+              title="Delete project"
+            >
+              <Trash2 size={16} />
+            </button>
+          </div>
+        ))}
       </div>
     </div>
   );
