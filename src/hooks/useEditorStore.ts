@@ -88,15 +88,17 @@ export const useEditorStore = create<EditorState>((set, get) => ({
     const state = get();
     const newObjects = [...state.objects, obj];
     set({ objects: newObjects, isDirty: true });
-    get().pushHistory();
+    // Push history after state update
+    setTimeout(() => get().pushHistory(), 0);
   },
 
   updateObject: (id, updates) => {
-    const state = get();
-    const newObjects = state.objects.map((o) =>
-      o.id === id ? { ...o, ...updates } : o
-    );
-    set({ objects: newObjects, isDirty: true });
+    set((state) => ({
+      objects: state.objects.map((o) =>
+        o.id === id ? { ...o, ...updates } : o
+      ),
+      isDirty: true,
+    }));
   },
 
   removeObject: (id) => {
@@ -104,7 +106,7 @@ export const useEditorStore = create<EditorState>((set, get) => ({
     const newObjects = state.objects.filter((o) => o.id !== id);
     const newSelected = state.selectedObjectId === id ? null : state.selectedObjectId;
     set({ objects: newObjects, selectedObjectId: newSelected, isDirty: true });
-    get().pushHistory();
+    setTimeout(() => get().pushHistory(), 0);
   },
 
   duplicateObject: (id) => {
@@ -119,7 +121,7 @@ export const useEditorStore = create<EditorState>((set, get) => ({
     };
     const newObjects = [...state.objects, newObj];
     set({ objects: newObjects, selectedObjectId: newObj.id, isDirty: true });
-    get().pushHistory();
+    setTimeout(() => get().pushHistory(), 0);
   },
 
   selectObject: (id) => set({ selectedObjectId: id }),

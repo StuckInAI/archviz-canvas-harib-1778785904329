@@ -46,7 +46,7 @@ export default function SceneContent() {
       <directionalLight position={[-8, 12, -8]} intensity={0.25} color="#c4d4ff" />
       <hemisphereLight args={['#87ceeb', '#4a7c3f', 0.35]} />
 
-      {/* Sun glow (a simple point light to simulate warm sun) */}
+      {/* Sun glow */}
       <pointLight position={[50, 40, 30]} intensity={0.3} color="#ffd699" distance={150} />
 
       {/* Grid */}
@@ -93,7 +93,7 @@ export default function SceneContent() {
 
       {/* Selected object with transform controls */}
       {selectedObj && (
-        <TransformableObject key={selectedObj.id + '-transform'} obj={selectedObj}>
+        <TransformableObject key={`transform-${selectedObj.id}`} obj={selectedObj}>
           <SceneObjectMesh
             obj={selectedObj}
             isSelected={true}

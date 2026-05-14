@@ -32,8 +32,9 @@ export default function SceneCanvas() {
           antialias: true,
           toneMapping: 3,
           toneMappingExposure: 1.1,
+          powerPreference: 'high-performance',
         }}
-        dpr={[1, 2]}
+        dpr={[1, 1.5]}
         style={{ width: '100%', height: '100%' }}
         onPointerMissed={() => {
           useEditorStore.getState().selectObject(null);

@@ -43,10 +43,10 @@ export default function SceneObjectMesh({ obj, isSelected, onSelect }: SceneObje
 
   if (!obj.visible) return null;
 
-  // When selected, render without group transform (TransformableObject will handle it)
+  // When selected inside TransformableObject, don't apply transforms (parent group handles it)
   if (isSelected) {
     return (
-      <>
+      <group>
         <mesh
           ref={meshRef}
           name={obj.id}
@@ -67,7 +67,7 @@ export default function SceneObjectMesh({ obj, isSelected, onSelect }: SceneObje
         <lineSegments geometry={edgesGeo} renderOrder={999}>
           <lineBasicMaterial color="#2563eb" linewidth={2} />
         </lineSegments>
-      </>
+      </group>
     );
   }
 
