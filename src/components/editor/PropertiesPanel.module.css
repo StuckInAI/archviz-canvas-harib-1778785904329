@@ -1,0 +1,185 @@
+.panel {
+  width: 280px;
+  background: var(--color-surface-dark);
+  border-left: 1px solid var(--color-border-dark);
+  display: flex;
+  flex-direction: column;
+  flex-shrink: 0;
+  overflow: hidden;
+}
+
+.header {
+  padding: var(--spacing-md);
+  border-bottom: 1px solid var(--color-border-dark);
+}
+
+.title {
+  color: var(--color-text-light);
+  font-size: 0.95rem;
+  font-weight: 600;
+}
+
+.content {
+  flex: 1;
+  overflow-y: auto;
+  padding: var(--spacing-md);
+}
+
+.section {
+  margin-bottom: var(--spacing-md);
+}
+
+.label {
+  display: block;
+  color: var(--color-text-secondary);
+  font-size: 0.78rem;
+  font-weight: 500;
+  text-transform: uppercase;
+  letter-spacing: 0.5px;
+  margin-bottom: var(--spacing-xs);
+}
+
+.desc {
+  color: var(--color-text-secondary);
+  font-size: 0.82rem;
+  line-height: 1.4;
+  font-style: italic;
+}
+
+.input {
+  width: 100%;
+  padding: 6px 8px;
+  background: rgba(255, 255, 255, 0.06);
+  border: 1px solid var(--color-border-dark);
+  border-radius: var(--radius-sm);
+  color: var(--color-text-light);
+  font-size: 0.88rem;
+  outline: none;
+}
+
+.input:focus {
+  border-color: var(--color-primary);
+}
+
+.vec3 {
+  display: flex;
+  gap: var(--spacing-xs);
+}
+
+.vec3Field {
+  flex: 1;
+  display: flex;
+  align-items: center;
+  gap: 2px;
+}
+
+.axisLabel {
+  color: var(--color-text-secondary);
+  font-size: 0.75rem;
+  font-weight: 600;
+  width: 16px;
+  text-align: center;
+}
+
+.numInput {
+  flex: 1;
+  width: 100%;
+  min-width: 0;
+  padding: 4px 4px;
+  background: rgba(255, 255, 255, 0.06);
+  border: 1px solid var(--color-border-dark);
+  border-radius: var(--radius-sm);
+  color: var(--color-text-light);
+  font-size: 0.8rem;
+  outline: none;
+  text-align: center;
+}
+
+.numInput:focus {
+  border-color: var(--color-primary);
+}
+
+.materialGrid {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 4px;
+  max-height: 240px;
+  overflow-y: auto;
+}
+
+.materialItem {
+  display: flex;
+  align-items: center;
+  gap: var(--spacing-xs);
+  padding: 4px 6px;
+  border-radius: var(--radius-sm);
+  border: 2px solid transparent;
+  transition: border-color var(--transition-fast);
+  cursor: pointer;
+}
+
+.materialItem:hover {
+  background: rgba(255, 255, 255, 0.05);
+}
+
+.materialSwatch {
+  width: 18px;
+  height: 18px;
+  border-radius: var(--radius-sm);
+  border: 1px solid rgba(255, 255, 255, 0.2);
+  flex-shrink: 0;
+}
+
+.materialName {
+  color: var(--color-text-light);
+  font-size: 0.72rem;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+
+.actions {
+  display: flex;
+  gap: var(--spacing-sm);
+  margin-top: var(--spacing-md);
+  padding-top: var(--spacing-md);
+  border-top: 1px solid var(--color-border-dark);
+}
+
+.actionBtn {
+  flex: 1;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: var(--spacing-xs);
+  padding: var(--spacing-sm);
+  border-radius: var(--radius-sm);
+  background: rgba(255, 255, 255, 0.06);
+  color: var(--color-text-light);
+  font-size: 0.8rem;
+  font-weight: 500;
+  transition: background var(--transition-fast);
+}
+
+.actionBtn:hover {
+  background: rgba(37, 99, 235, 0.3);
+}
+
+.deleteActionBtn {
+  flex: 1;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: var(--spacing-xs);
+  padding: var(--spacing-sm);
+  border-radius: var(--radius-sm);
+  background: rgba(239, 68, 68, 0.1);
+  color: var(--color-danger);
+  font-size: 0.8rem;
+  font-weight: 500;
+  transition: background var(--transition-fast);
+}
+
+.deleteActionBtn:hover {
+  background: rgba(239, 68, 68, 0.25);
+}

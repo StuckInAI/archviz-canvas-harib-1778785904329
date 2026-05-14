@@ -1,0 +1,198 @@
+.wrapper {
+  width: 100%;
+  height: 100%;
+  overflow-y: auto;
+  background: var(--color-bg);
+}
+
+.header {
+  display: flex;
+  align-items: center;
+  gap: var(--spacing-lg);
+  padding: var(--spacing-md) var(--spacing-xl);
+  background: var(--color-surface);
+  border-bottom: 1px solid var(--color-border);
+}
+
+.logo {
+  display: flex;
+  align-items: center;
+  gap: var(--spacing-sm);
+  cursor: pointer;
+}
+
+.logoText {
+  font-size: 1.2rem;
+  font-weight: 700;
+  color: var(--color-text);
+}
+
+.subtitle {
+  color: var(--color-text-secondary);
+  font-size: 0.9rem;
+}
+
+.main {
+  max-width: 1100px;
+  margin: 0 auto;
+  padding: var(--spacing-xl);
+}
+
+.actions {
+  display: flex;
+  gap: var(--spacing-md);
+  margin-bottom: var(--spacing-xl);
+  flex-wrap: wrap;
+}
+
+.createBtn {
+  display: inline-flex;
+  align-items: center;
+  gap: var(--spacing-sm);
+  padding: var(--spacing-sm) var(--spacing-lg);
+  background: var(--color-primary);
+  color: white;
+  font-weight: 600;
+  border-radius: var(--radius-md);
+  transition: background var(--transition-fast);
+}
+
+.createBtn:hover {
+  background: var(--color-primary-hover);
+}
+
+.sampleBtn {
+  display: inline-flex;
+  align-items: center;
+  gap: var(--spacing-sm);
+  padding: var(--spacing-sm) var(--spacing-lg);
+  background: var(--color-surface);
+  color: var(--color-text);
+  font-weight: 600;
+  border-radius: var(--radius-md);
+  border: 1px solid var(--color-border);
+  transition: background var(--transition-fast);
+}
+
+.sampleBtn:hover {
+  background: var(--color-primary-light);
+}
+
+.samplesSection {
+  margin-bottom: var(--spacing-xl);
+}
+
+.samplesSection h3 {
+  font-size: 1.1rem;
+  color: var(--color-text);
+  margin-bottom: var(--spacing-md);
+}
+
+.sectionTitle {
+  font-size: 1.1rem;
+  color: var(--color-text);
+  margin-bottom: var(--spacing-md);
+}
+
+.grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(280px, 1fr));
+  gap: var(--spacing-lg);
+}
+
+.card {
+  background: var(--color-surface);
+  border-radius: var(--radius-lg);
+  box-shadow: var(--shadow-sm);
+  overflow: hidden;
+  border: 1px solid var(--color-border);
+  transition: box-shadow var(--transition-fast), transform var(--transition-fast);
+}
+
+.card:hover {
+  box-shadow: var(--shadow-md);
+  transform: translateY(-2px);
+}
+
+.cardThumb {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  height: 120px;
+  background: linear-gradient(135deg, var(--color-primary-light), #e0e7ff);
+  cursor: pointer;
+}
+
+.cardInfo {
+  padding: var(--spacing-md);
+}
+
+.cardTitle {
+  font-size: 1rem;
+  font-weight: 600;
+  color: var(--color-text);
+  cursor: pointer;
+  margin-bottom: var(--spacing-xs);
+}
+
+.cardTitle:hover {
+  color: var(--color-primary);
+}
+
+.cardDesc {
+  font-size: 0.85rem;
+  color: var(--color-text-secondary);
+  line-height: 1.4;
+  margin-bottom: var(--spacing-xs);
+}
+
+.cardMeta {
+  font-size: 0.8rem;
+  color: var(--color-text-secondary);
+}
+
+.cardActions {
+  display: flex;
+  gap: var(--spacing-sm);
+  margin-top: var(--spacing-sm);
+}
+
+.cardActions button {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  padding: var(--spacing-xs) var(--spacing-sm);
+  border-radius: var(--radius-sm);
+  color: var(--color-text-secondary);
+  transition: color var(--transition-fast), background var(--transition-fast);
+}
+
+.cardActions button:hover {
+  color: var(--color-primary);
+  background: var(--color-primary-light);
+}
+
+.deleteBtn:hover {
+  color: var(--color-danger) !important;
+  background: #fef2f2 !important;
+}
+
+.renameInput {
+  width: 100%;
+  padding: var(--spacing-xs) var(--spacing-sm);
+  border: 2px solid var(--color-primary);
+  border-radius: var(--radius-sm);
+  font-weight: 600;
+  outline: none;
+}
+
+.empty {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  padding: var(--spacing-2xl);
+  color: var(--color-text-secondary);
+  text-align: center;
+  gap: var(--spacing-md);
+}

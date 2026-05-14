@@ -1,0 +1,115 @@
+.sidebar {
+  width: 260px;
+  background: var(--color-surface-dark);
+  border-right: 1px solid var(--color-border-dark);
+  display: flex;
+  flex-direction: column;
+  flex-shrink: 0;
+  overflow: hidden;
+}
+
+.header {
+  padding: var(--spacing-md);
+  border-bottom: 1px solid var(--color-border-dark);
+}
+
+.title {
+  color: var(--color-text-light);
+  font-size: 0.95rem;
+  font-weight: 600;
+}
+
+.searchWrap {
+  position: relative;
+  padding: var(--spacing-sm) var(--spacing-md);
+}
+
+.searchIcon {
+  position: absolute;
+  top: 50%;
+  left: 24px;
+  transform: translateY(-50%);
+  color: var(--color-text-secondary);
+}
+
+.searchInput {
+  width: 100%;
+  padding: 6px 8px 6px 28px;
+  background: rgba(255, 255, 255, 0.06);
+  border: 1px solid var(--color-border-dark);
+  border-radius: var(--radius-sm);
+  color: var(--color-text-light);
+  font-size: 0.85rem;
+  outline: none;
+}
+
+.searchInput:focus {
+  border-color: var(--color-primary);
+}
+
+.list {
+  flex: 1;
+  overflow-y: auto;
+  padding: var(--spacing-sm) 0;
+}
+
+.catGroup {
+  margin-bottom: 2px;
+}
+
+.catHeader {
+  display: flex;
+  align-items: center;
+  gap: var(--spacing-sm);
+  width: 100%;
+  padding: var(--spacing-sm) var(--spacing-md);
+  color: var(--color-text-light);
+  font-size: 0.85rem;
+  font-weight: 600;
+  text-align: left;
+  transition: background var(--transition-fast);
+}
+
+.catHeader:hover {
+  background: rgba(255, 255, 255, 0.05);
+}
+
+.catCount {
+  margin-left: auto;
+  font-weight: 400;
+  color: var(--color-text-secondary);
+  font-size: 0.75rem;
+}
+
+.catItems {
+  padding: 0 var(--spacing-sm);
+}
+
+.assetItem {
+  display: flex;
+  align-items: center;
+  gap: var(--spacing-sm);
+  width: 100%;
+  padding: 6px var(--spacing-md);
+  color: var(--color-text-light);
+  font-size: 0.82rem;
+  text-align: left;
+  border-radius: var(--radius-sm);
+  transition: background var(--transition-fast);
+}
+
+.assetItem:hover {
+  background: rgba(37, 99, 235, 0.2);
+}
+
+.assetIcon {
+  font-size: 1.1rem;
+  width: 24px;
+  text-align: center;
+}
+
+.assetName {
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}

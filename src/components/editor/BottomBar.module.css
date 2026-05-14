@@ -1,0 +1,48 @@
+.bar {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  height: 32px;
+  padding: 0 var(--spacing-md);
+  background: var(--color-surface-dark);
+  border-top: 1px solid var(--color-border-dark);
+  flex-shrink: 0;
+}
+
+.left,
+.center,
+.right {
+  display: flex;
+  align-items: center;
+  gap: var(--spacing-sm);
+}
+
+.toggle {
+  display: flex;
+  align-items: center;
+  gap: 4px;
+  padding: 2px 8px;
+  border-radius: var(--radius-sm);
+  color: var(--color-text-secondary);
+  font-size: 0.75rem;
+  transition: color var(--transition-fast), background var(--transition-fast);
+}
+
+.toggle:hover {
+  background: rgba(255, 255, 255, 0.05);
+}
+
+.toggle.active {
+  color: var(--color-primary);
+  background: rgba(37, 99, 235, 0.15);
+}
+
+.info {
+  color: var(--color-text-secondary);
+  font-size: 0.75rem;
+}
+
+.shortcuts {
+  color: var(--color-text-secondary);
+  font-size: 0.7rem;
+}
