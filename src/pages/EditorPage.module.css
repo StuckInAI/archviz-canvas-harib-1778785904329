@@ -1,13 +1,13 @@
-.editorPage {
+.page {
   display: flex;
   flex-direction: column;
-  width: 100vw;
+  width: 100%;
   height: 100vh;
-  overflow: hidden;
   background: #1a1a2e;
+  overflow: hidden;
 }
 
-.mainArea {
+.middle {
   display: flex;
   flex: 1;
   overflow: hidden;

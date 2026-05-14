@@ -1,5 +1,5 @@
 import { useNavigate } from 'react-router-dom';
-import { Building2, ArrowRight, Layers, Palette, Box } from 'lucide-react';
+import { Building2, ArrowRight } from 'lucide-react';
 import styles from './LandingPage.module.css';
 
 export default function LandingPage() {
@@ -8,35 +8,33 @@ export default function LandingPage() {
   return (
     <div className={styles.page}>
       <div className={styles.hero}>
-        <div className={styles.icon}>
-          <Building2 size={48} />
+        <div className={styles.logoWrap}>
+          <Building2 size={48} className={styles.logoIcon} />
         </div>
         <h1 className={styles.title}>EduArch3D</h1>
         <p className={styles.subtitle}>
-          A browser-based 3D architectural design tool for learning and
-          experimentation. Build rooms, houses, and buildings with drag-and-drop
-          elements.
+          A visual 3D architectural design tool for learning building concepts.
+          Place walls, floors, doors, furniture and more in an interactive 3D canvas.
         </p>
-        <button className={styles.cta} onClick={() => navigate('/dashboard')}>
+        <button
+          className={styles.ctaBtn}
+          onClick={() => navigate('/dashboard')}
+        >
           Open Dashboard <ArrowRight size={18} />
         </button>
       </div>
-
       <div className={styles.features}>
         <div className={styles.feature}>
-          <Box size={24} />
-          <h3>3D Building Blocks</h3>
-          <p>Walls, floors, columns, roofs, doors, windows and more</p>
+          <h3>🏗️ Drag & Place</h3>
+          <p>Choose from a library of architectural elements and place them in 3D space.</p>
         </div>
         <div className={styles.feature}>
-          <Layers size={24} />
-          <h3>Scene Management</h3>
-          <p>Multiple views, undo/redo, grid snapping, keyboard shortcuts</p>
+          <h3>🎨 Materials</h3>
+          <p>Apply concrete, brick, wood, marble, glass and more to any element.</p>
         </div>
         <div className={styles.feature}>
-          <Palette size={24} />
-          <h3>Material Library</h3>
-          <p>Concrete, brick, wood, marble, glass, steel and more</p>
+          <h3>💾 Auto-Save</h3>
+          <p>Projects are saved automatically to your browser's local storage.</p>
         </div>
       </div>
     </div>

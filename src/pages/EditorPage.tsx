@@ -3,7 +3,7 @@ import { useParams, useNavigate } from 'react-router-dom';
 import { useEditorStore } from '@/hooks/useEditorStore';
 import { useAutoSave } from '@/hooks/useAutoSave';
 import { useKeyboardShortcuts } from '@/hooks/useKeyboardShortcuts';
-import { getProject, saveProject } from '@/lib/storage';
+import { loadProject, saveProject, hasTutorialBeenSeen, markTutorialSeen } from '@/lib/storage';
 import AssetSidebar from '@/components/editor/AssetSidebar';
 import TopToolbar from '@/components/editor/TopToolbar';
 import BottomBar from '@/components/editor/BottomBar';
@@ -15,8 +15,6 @@ import styles from './EditorPage.module.css';
 export default function EditorPage() {
   const { projectId } = useParams<{ projectId: string }>();
   const navigate = useNavigate();
-  const [showTutorial, setShowTutorial] = useState(false);
-
   const {
     setProjectId,
     setProjectName,
@@ -27,6 +25,8 @@ export default function EditorPage() {
     markClean,
   } = useEditorStore();
 
+  const [showTutorial, setShowTutorial] = useState(false);
+
   useAutoSave();
   useKeyboardShortcuts();
 
@@ -35,7 +35,7 @@ export default function EditorPage() {
       navigate('/dashboard');
       return;
     }
-    const project = getProject(projectId);
+    const project = loadProject(projectId);
     if (!project) {
       navigate('/dashboard');
       return;
@@ -44,8 +44,7 @@ export default function EditorPage() {
     setProjectName(project.name);
     setObjects(project.objects);
 
-    const tutorialSeen = localStorage.getItem('eduarch3d_tutorial_seen');
-    if (!tutorialSeen) {
+    if (!hasTutorialBeenSeen()) {
       setShowTutorial(true);
     }
   }, [projectId, navigate, setProjectId, setProjectName, setObjects]);
@@ -65,13 +64,13 @@ export default function EditorPage() {
 
   function handleDismissTutorial() {
     setShowTutorial(false);
-    localStorage.setItem('eduarch3d_tutorial_seen', 'true');
+    markTutorialSeen();
   }
 
   return (
-    <div className={styles.editorPage}>
+    <div className={styles.page}>
       <TopToolbar onSave={handleSave} onBack={() => navigate('/dashboard')} />
-      <div className={styles.mainArea}>
+      <div className={styles.middle}>
         <AssetSidebar />
         <div className={styles.canvasArea}>
           <SceneCanvas />

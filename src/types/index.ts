@@ -1,10 +1,10 @@
-export type AssetCategory = 'structural' | 'openings' | 'furniture' | 'lighting' | 'outdoor' | 'decorative';
+export type AssetCategory = 'structural' | 'openings' | 'furniture' | 'decoration' | 'exterior';
+
+export type Vector3Tuple = [number, number, number];
 
 export type TransformMode = 'translate' | 'rotate' | 'scale';
 
 export type ViewMode = 'perspective' | 'top' | 'front' | 'side';
-
-export type Vector3Tuple = [number, number, number];
 
 export interface SceneObject {
   id: string;
