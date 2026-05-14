@@ -4,35 +4,31 @@ import { saveProject } from '@/lib/storage';
 
 export function useAutoSave() {
   const timerRef = useRef<ReturnType<typeof setTimeout> | null>(null);
-  const projectId = useEditorStore((s) => s.projectId);
-  const projectName = useEditorStore((s) => s.projectName);
-  const objects = useEditorStore((s) => s.objects);
-  const isDirty = useEditorStore((s) => s.isDirty);
-  const markClean = useEditorStore((s) => s.markClean);
 
   useEffect(() => {
-    if (!isDirty || !projectId) return;
-
-    if (timerRef.current) {
-      clearTimeout(timerRef.current);
-    }
-
-    timerRef.current = setTimeout(() => {
-      saveProject({
-        id: projectId,
-        name: projectName,
-        description: '',
-        objects: objects,
-        createdAt: new Date().toISOString(),
-        updatedAt: new Date().toISOString(),
-      });
-      markClean();
-    }, 3000);
+    const unsub = useEditorStore.subscribe((state, prev) => {
+      if (state.isDirty && state.projectId) {
+        if (timerRef.current) clearTimeout(timerRef.current);
+        timerRef.current = setTimeout(() => {
+          const s = useEditorStore.getState();
+          if (s.isDirty && s.projectId) {
+            saveProject({
+              id: s.projectId,
+              name: s.projectName,
+              description: '',
+              objects: s.objects,
+              createdAt: new Date().toISOString(),
+              updatedAt: new Date().toISOString(),
+            });
+            s.markClean();
+          }
+        }, 30000);
+      }
+    });
 
     return () => {
-      if (timerRef.current) {
-        clearTimeout(timerRef.current);
-      }
+      unsub();
+      if (timerRef.current) clearTimeout(timerRef.current);
     };
-  }, [isDirty, projectId, projectName, objects, markClean]);
+  }, []);
 }

@@ -1,78 +1,61 @@
-import { useState } from 'react';
-import { X, ChevronRight, ChevronLeft } from 'lucide-react';
-import styles from './TutorialOverlay.module.css';
-
-type TutorialOverlayProps = {
+interface TutorialOverlayProps {
   onDismiss: () => void;
-};
-
-const STEPS = [
-  {
-    title: 'Welcome to EduArch3D! 🏗️',
-    text: 'This is your 3D architectural design canvas. You can build rooms, houses, and entire buildings using predefined architectural elements.',
-  },
-  {
-    title: 'Asset Library (Left Sidebar)',
-    text: 'Browse categories like Structural, Openings, Furniture, and more. Click any asset to place it on the canvas at the origin.',
-  },
-  {
-    title: 'Transform Objects',
-    text: 'Select an object by clicking it. Use G (Move), R (Rotate), S (Scale) to switch transform modes. Drag the colored arrows to transform.',
-  },
-  {
-    title: 'Properties Panel (Right)',
-    text: 'When an object is selected, see its position, rotation, scale, and material. Change materials to brick, wood, marble, glass, and more!',
-  },
-  {
-    title: 'Camera Controls',
-    text: 'Left-click + drag to orbit. Right-click + drag to pan. Scroll to zoom. Use the view buttons (Persp, Top, Front, Side) for preset views.',
-  },
-  {
-    title: 'Save & Manage',
-    text: 'Projects auto-save every few seconds. Use the Dashboard to manage multiple projects. Try the Sample Projects to get started!',
-  },
-];
+}
 
 export default function TutorialOverlay({ onDismiss }: TutorialOverlayProps) {
-  const [step, setStep] = useState(0);
-  const current = STEPS[step];
+  const steps = [
+    { title: 'Welcome to EduArch3D!', desc: 'A 3D architectural design tool built for students and educators.' },
+    { title: 'Asset Library', desc: 'Use the left sidebar to browse and add architectural elements like walls, doors, furniture, and more.' },
+    { title: 'Transform Objects', desc: 'Select an object and use G (Move), R (Rotate), S (Scale) to transform it. Or use the toolbar buttons.' },
+    { title: 'Properties Panel', desc: 'When an object is selected, the right panel shows its position, rotation, scale, and material options.' },
+    { title: 'Save Your Work', desc: 'Click Save or press Ctrl+S. Your project auto-saves every 30 seconds.' },
+    { title: 'Keyboard Shortcuts', desc: 'Delete = Remove object, Ctrl+D = Duplicate, Ctrl+Z = Undo, Ctrl+Shift+Z = Redo' },
+  ];
 
   return (
-    <div className={styles.overlay}>
-      <div className={styles.card}>
-        <button className={styles.closeBtn} onClick={onDismiss}>
-          <X size={18} />
-        </button>
-
-        <div className={styles.stepIndicator}>
-          {STEPS.map((_, i) => (
-            <div
-              key={i}
-              className={i === step ? styles.dotActive : styles.dot}
-            />
-          ))}
-        </div>
-
-        <h2 className={styles.title}>{current.title}</h2>
-        <p className={styles.text}>{current.text}</p>
-
-        <div className={styles.nav}>
-          {step > 0 && (
-            <button className={styles.navBtn} onClick={() => setStep(step - 1)}>
-              <ChevronLeft size={16} /> Back
-            </button>
-          )}
-          <div className={styles.spacer} />
-          {step < STEPS.length - 1 ? (
-            <button className={styles.navBtnPrimary} onClick={() => setStep(step + 1)}>
-              Next <ChevronRight size={16} />
-            </button>
-          ) : (
-            <button className={styles.navBtnPrimary} onClick={onDismiss}>
-              Start Building!
-            </button>
-          )}
-        </div>
+    <div style={{
+      position: 'fixed',
+      inset: 0,
+      background: 'rgba(0,0,0,0.7)',
+      display: 'flex',
+      alignItems: 'center',
+      justifyContent: 'center',
+      zIndex: 1000,
+    }}>
+      <div style={{
+        background: '#2d2d44',
+        borderRadius: 12,
+        padding: '2rem',
+        maxWidth: 500,
+        width: '90%',
+        color: 'white',
+        maxHeight: '80vh',
+        overflowY: 'auto',
+      }}>
+        <h2 style={{ fontSize: '1.3rem', marginBottom: '1.5rem', fontWeight: 700 }}>Getting Started</h2>
+        {steps.map((step, i) => (
+          <div key={i} style={{ marginBottom: '1rem' }}>
+            <h4 style={{ fontSize: '0.95rem', fontWeight: 600, color: '#60a5fa', marginBottom: 4 }}>
+              {i + 1}. {step.title}
+            </h4>
+            <p style={{ fontSize: '0.85rem', color: '#ccc', lineHeight: 1.5 }}>{step.desc}</p>
+          </div>
+        ))}
+        <button
+          onClick={onDismiss}
+          style={{
+            marginTop: '1rem',
+            padding: '0.6rem 1.5rem',
+            background: '#2563eb',
+            color: 'white',
+            borderRadius: 6,
+            fontSize: '0.9rem',
+            fontWeight: 600,
+            cursor: 'pointer',
+            border: 'none',
+            width: '100%',
+          }}
+        >Got it, let's build!</button>
       </div>
     </div>
   );

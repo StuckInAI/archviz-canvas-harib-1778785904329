@@ -2,71 +2,41 @@ import { useEffect } from 'react';
 import { useEditorStore } from '@/hooks/useEditorStore';
 
 export function useKeyboardShortcuts() {
-  const {
-    selectedObjectId,
-    setTransformMode,
-    removeObject,
-    duplicateObject,
-    undo,
-    redo,
-    toggleGrid,
-    toggleSnap,
-  } = useEditorStore();
-
   useEffect(() => {
     function handleKeyDown(e: KeyboardEvent) {
       const target = e.target as HTMLElement;
       if (target.tagName === 'INPUT' || target.tagName === 'TEXTAREA') return;
 
+      const state = useEditorStore.getState();
+
       if (e.key === 'g' || e.key === 'G') {
+        state.setTransformMode('translate');
+      } else if (e.key === 'r' || e.key === 'R') {
+        state.setTransformMode('rotate');
+      } else if (e.key === 's' || e.key === 'S') {
         if (!e.ctrlKey && !e.metaKey) {
-          setTransformMode('translate');
+          state.setTransformMode('scale');
         }
-      }
-      if (e.key === 'r' || e.key === 'R') {
-        if (!e.ctrlKey && !e.metaKey) {
-          setTransformMode('rotate');
+      } else if (e.key === 'Delete' || e.key === 'Backspace') {
+        if (state.selectedObjectId) {
+          state.removeObject(state.selectedObjectId);
         }
-      }
-      if (e.key === 's' || e.key === 'S') {
-        if (!e.ctrlKey && !e.metaKey) {
-          setTransformMode('scale');
-        }
-      }
-      if (e.key === 'Delete' || e.key === 'Backspace') {
-        if (selectedObjectId) {
-          removeObject(selectedObjectId);
-        }
-      }
-      if ((e.ctrlKey || e.metaKey) && e.key === 'd') {
+      } else if (e.key === 'd' && (e.ctrlKey || e.metaKey)) {
         e.preventDefault();
-        if (selectedObjectId) {
-          duplicateObject(selectedObjectId);
+        if (state.selectedObjectId) {
+          state.duplicateObject(state.selectedObjectId);
         }
-      }
-      if ((e.ctrlKey || e.metaKey) && e.key === 'z') {
+      } else if (e.key === 'z' && (e.ctrlKey || e.metaKey)) {
         e.preventDefault();
         if (e.shiftKey) {
-          redo();
+          state.redo();
         } else {
-          undo();
+          state.undo();
         }
-      }
-      if ((e.ctrlKey || e.metaKey) && e.key === 'y') {
-        e.preventDefault();
-        redo();
-      }
-      if (e.key === 'F1') {
-        e.preventDefault();
-        toggleGrid();
-      }
-      if (e.key === 'F2') {
-        e.preventDefault();
-        toggleSnap();
       }
     }
 
     window.addEventListener('keydown', handleKeyDown);
     return () => window.removeEventListener('keydown', handleKeyDown);
-  }, [selectedObjectId, setTransformMode, removeObject, duplicateObject, undo, redo, toggleGrid, toggleSnap]);
+  }, []);
 }

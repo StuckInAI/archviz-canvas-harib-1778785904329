@@ -1,38 +1,27 @@
 import { useState } from 'react';
 import { v4 as uuidv4 } from 'uuid';
-import { Search, ChevronDown, ChevronRight } from 'lucide-react';
-import { ASSET_LIBRARY, CATEGORY_LABELS } from '@/lib/assets';
 import { useEditorStore } from '@/hooks/useEditorStore';
-import { AssetCategory, SceneObject } from '@/types';
-import styles from './AssetSidebar.module.css';
-import clsx from 'clsx';
+import { ASSET_LIBRARY, AssetDefinition, CATEGORY_LABELS } from '@/lib/assets';
+import { SceneObject, AssetCategory } from '@/types';
 
 export default function AssetSidebar() {
   const [search, setSearch] = useState('');
-  const [expandedCategories, setExpandedCategories] = useState<Set<string>>(new Set(['structural', 'furniture']));
-  const { addObject, selectObject } = useEditorStore();
+  const [expandedCats, setExpandedCats] = useState<Set<string>>(new Set(['structural']));
+  const addObject = useEditorStore((s) => s.addObject);
+  const selectObject = useEditorStore((s) => s.selectObject);
 
-  const filteredAssets = ASSET_LIBRARY.filter((a) =>
-    a.name.toLowerCase().includes(search.toLowerCase())
-  );
-
-  const categories = Array.from(new Set(filteredAssets.map((a) => a.category)));
+  const categories = Object.keys(CATEGORY_LABELS) as AssetCategory[];
 
   function toggleCategory(cat: string) {
-    setExpandedCategories((prev) => {
+    setExpandedCats((prev) => {
       const next = new Set(prev);
-      if (next.has(cat)) {
-        next.delete(cat);
-      } else {
-        next.add(cat);
-      }
+      if (next.has(cat)) next.delete(cat);
+      else next.add(cat);
       return next;
     });
   }
 
-  function handlePlace(assetId: string) {
-    const asset = ASSET_LIBRARY.find((a) => a.id === assetId);
-    if (!asset) return;
+  function handleAddAsset(asset: AssetDefinition) {
     const obj: SceneObject = {
       id: uuidv4(),
       assetId: asset.id,
@@ -40,59 +29,132 @@ export default function AssetSidebar() {
       position: [0, asset.defaultScale[1] / 2, 0],
       rotation: [0, 0, 0],
       scale: [...asset.defaultScale],
-      materialId: 'concrete',
+      materialId: '',
       visible: true,
     };
     addObject(obj);
     selectObject(obj.id);
   }
 
+  const filteredAssets = search.trim()
+    ? ASSET_LIBRARY.filter((a) =>
+        a.name.toLowerCase().includes(search.toLowerCase())
+      )
+    : null;
+
   return (
-    <div className={styles.sidebar}>
-      <div className={styles.header}>
-        <h3 className={styles.title}>Assets</h3>
-      </div>
-      <div className={styles.searchWrap}>
-        <Search size={14} className={styles.searchIcon} />
+    <div style={{
+      width: 240,
+      background: '#25253a',
+      borderRight: '1px solid #3d3d5c',
+      overflowY: 'auto',
+      flexShrink: 0,
+      display: 'flex',
+      flexDirection: 'column',
+    }}>
+      <div style={{ padding: '0.75rem', borderBottom: '1px solid #3d3d5c' }}>
+        <h3 style={{ color: 'white', fontSize: '0.9rem', marginBottom: '0.5rem', fontWeight: 600 }}>Assets</h3>
         <input
-          className={styles.searchInput}
-          placeholder="Search assets..."
+          placeholder="Search..."
           value={search}
-          onChange={(e: React.ChangeEvent<HTMLInputElement>) => setSearch(e.target.value)}
+          onChange={(e) => setSearch(e.target.value)}
+          style={{
+            width: '100%',
+            padding: '0.35rem 0.5rem',
+            background: '#3d3d5c',
+            border: 'none',
+            borderRadius: 4,
+            color: 'white',
+            fontSize: '0.8rem',
+            outline: 'none',
+          }}
         />
       </div>
-      <div className={styles.list}>
-        {categories.map((cat) => {
-          const isExpanded = expandedCategories.has(cat);
-          const items = filteredAssets.filter((a) => a.category === cat);
-          return (
-            <div key={cat} className={styles.catGroup}>
-              <button
-                className={styles.catHeader}
-                onClick={() => toggleCategory(cat)}
-              >
-                {isExpanded ? <ChevronDown size={14} /> : <ChevronRight size={14} />}
-                <span>{CATEGORY_LABELS[cat] || cat}</span>
-                <span className={styles.catCount}>{items.length}</span>
-              </button>
-              {isExpanded && (
-                <div className={styles.catItems}>
-                  {items.map((asset) => (
-                    <button
-                      key={asset.id}
-                      className={styles.assetItem}
-                      onClick={() => handlePlace(asset.id)}
-                      title={asset.description}
-                    >
-                      <span className={styles.assetIcon}>{asset.icon}</span>
-                      <span className={styles.assetName}>{asset.name}</span>
-                    </button>
-                  ))}
-                </div>
-              )}
-            </div>
-          );
-        })}
+
+      <div style={{ flex: 1, overflowY: 'auto', padding: '0.5rem' }}>
+        {filteredAssets ? (
+          filteredAssets.map((asset) => (
+            <button
+              key={asset.id}
+              onClick={() => handleAddAsset(asset)}
+              style={{
+                display: 'flex',
+                alignItems: 'center',
+                gap: 8,
+                width: '100%',
+                padding: '0.5rem',
+                background: 'transparent',
+                color: '#e0e0e0',
+                border: 'none',
+                borderRadius: 4,
+                fontSize: '0.8rem',
+                cursor: 'pointer',
+                textAlign: 'left',
+              }}
+              onMouseEnter={(e) => (e.currentTarget.style.background = '#3d3d5c')}
+              onMouseLeave={(e) => (e.currentTarget.style.background = 'transparent')}
+            >
+              <span style={{ fontSize: '1.2rem' }}>{asset.icon}</span>
+              <span>{asset.name}</span>
+            </button>
+          ))
+        ) : (
+          categories.map((cat) => {
+            const catAssets = ASSET_LIBRARY.filter((a) => a.category === cat);
+            const isExpanded = expandedCats.has(cat);
+            return (
+              <div key={cat} style={{ marginBottom: '0.25rem' }}>
+                <button
+                  onClick={() => toggleCategory(cat)}
+                  style={{
+                    display: 'flex',
+                    alignItems: 'center',
+                    justifyContent: 'space-between',
+                    width: '100%',
+                    padding: '0.4rem 0.5rem',
+                    background: 'transparent',
+                    color: '#aaa',
+                    border: 'none',
+                    fontSize: '0.75rem',
+                    fontWeight: 600,
+                    cursor: 'pointer',
+                    textTransform: 'uppercase',
+                    letterSpacing: '0.05em',
+                  }}
+                >
+                  <span>{CATEGORY_LABELS[cat]}</span>
+                  <span>{isExpanded ? '▼' : '▶'}</span>
+                </button>
+                {isExpanded && catAssets.map((asset) => (
+                  <button
+                    key={asset.id}
+                    onClick={() => handleAddAsset(asset)}
+                    title={asset.description}
+                    style={{
+                      display: 'flex',
+                      alignItems: 'center',
+                      gap: 8,
+                      width: '100%',
+                      padding: '0.4rem 0.5rem 0.4rem 1rem',
+                      background: 'transparent',
+                      color: '#e0e0e0',
+                      border: 'none',
+                      borderRadius: 4,
+                      fontSize: '0.8rem',
+                      cursor: 'pointer',
+                      textAlign: 'left',
+                    }}
+                    onMouseEnter={(e) => (e.currentTarget.style.background = '#3d3d5c')}
+                    onMouseLeave={(e) => (e.currentTarget.style.background = 'transparent')}
+                  >
+                    <span style={{ fontSize: '1.1rem' }}>{asset.icon}</span>
+                    <span>{asset.name}</span>
+                  </button>
+                ))}
+              </div>
+            );
+          })
+        )}
       </div>
     </div>
   );

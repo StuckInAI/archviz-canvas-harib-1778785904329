@@ -10,7 +10,6 @@ import BottomBar from '@/components/editor/BottomBar';
 import PropertiesPanel from '@/components/editor/PropertiesPanel';
 import TutorialOverlay from '@/components/editor/TutorialOverlay';
 import SceneCanvas from '@/components/three/SceneCanvas';
-import styles from './EditorPage.module.css';
 
 export default function EditorPage() {
   const { projectId } = useParams<{ projectId: string }>();
@@ -70,11 +69,22 @@ export default function EditorPage() {
   }
 
   return (
-    <div className={styles.editor}>
+    <div style={{
+      display: 'flex',
+      flexDirection: 'column',
+      width: '100%',
+      height: '100vh',
+      overflow: 'hidden',
+      background: '#1e1e2e',
+    }}>
       <TopToolbar onSave={handleSave} onBack={() => navigate('/dashboard')} />
-      <div className={styles.main}>
+      <div style={{
+        display: 'flex',
+        flex: 1,
+        overflow: 'hidden',
+      }}>
         {sidebarOpen && <AssetSidebar />}
-        <div className={styles.canvas}>
+        <div style={{ flex: 1, position: 'relative' }}>
           <SceneCanvas />
         </div>
         {propertiesPanelOpen && selectedObjectId && <PropertiesPanel />}

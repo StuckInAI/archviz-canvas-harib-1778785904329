@@ -2,16 +2,13 @@ import { useCallback } from 'react';
 import { OrbitControls, Grid, ContactShadows, Environment } from '@react-three/drei';
 import { useEditorStore } from '@/hooks/useEditorStore';
 import SceneObjectMesh from '@/components/three/SceneObjectMesh';
-import * as THREE from 'three';
 
 export default function SceneContent() {
-  const {
-    objects,
-    selectedObjectId,
-    selectObject,
-    gridVisible,
-    viewMode,
-  } = useEditorStore();
+  const objects = useEditorStore((s) => s.objects);
+  const selectedObjectId = useEditorStore((s) => s.selectedObjectId);
+  const selectObject = useEditorStore((s) => s.selectObject);
+  const gridVisible = useEditorStore((s) => s.gridVisible);
+  const viewMode = useEditorStore((s) => s.viewMode);
 
   const handleMissedClick = useCallback(() => {
     selectObject(null);
@@ -34,9 +31,7 @@ export default function SceneContent() {
         shadow-camera-bottom={-20}
       />
       <directionalLight position={[-5, 8, -5]} intensity={0.3} />
-      <hemisphereLight
-        args={['#b1e1ff', '#b97a20', 0.3]}
-      />
+      <hemisphereLight args={['#b1e1ff', '#b97a20', 0.3]} />
 
       {/* Environment for PBR reflections */}
       <Environment preset="city" />
@@ -58,7 +53,7 @@ export default function SceneContent() {
         />
       )}
 
-      {/* Ground plane for shadows */}
+      {/* Ground plane for shadows and click-to-deselect */}
       <mesh
         rotation={[-Math.PI / 2, 0, 0]}
         position={[0, -0.02, 0]}

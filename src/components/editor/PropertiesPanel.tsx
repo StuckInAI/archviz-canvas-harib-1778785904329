@@ -1,177 +1,152 @@
 import { useEditorStore } from '@/hooks/useEditorStore';
-import { MATERIAL_PRESETS, getAssetById } from '@/lib/assets';
+import { MATERIAL_PRESETS } from '@/lib/assets';
 import { Vector3Tuple } from '@/types';
-import { Trash2, Copy } from 'lucide-react';
-import styles from './PropertiesPanel.module.css';
 
 export default function PropertiesPanel() {
-  const {
-    objects,
-    selectedObjectId,
-    updateObject,
-    removeObject,
-    duplicateObject,
-    pushHistory,
-  } = useEditorStore();
-
+  const { objects, selectedObjectId, updateObject } = useEditorStore();
   const obj = objects.find((o) => o.id === selectedObjectId);
+
   if (!obj) return null;
 
-  const asset = getAssetById(obj.assetId);
-
-  function handleVec3Change(field: 'position' | 'rotation' | 'scale', index: number, value: string) {
-    if (!obj) return;
-    const num = parseFloat(value);
-    if (isNaN(num)) return;
-    const current = [...obj[field]] as Vector3Tuple;
-    current[index] = num;
-    updateObject(obj.id, { [field]: current });
+  function setPosition(axis: number, val: number) {
+    const pos: Vector3Tuple = [...obj!.position];
+    pos[axis] = val;
+    updateObject(obj!.id, { position: pos });
   }
 
-  function handleVec3Blur() {
-    pushHistory();
+  function setScale(axis: number, val: number) {
+    const s: Vector3Tuple = [...obj!.scale];
+    s[axis] = val;
+    updateObject(obj!.id, { scale: s });
   }
 
-  function handleMaterialChange(materialId: string) {
-    if (!obj) return;
-    updateObject(obj.id, { materialId });
-    pushHistory();
+  function setRotation(axis: number, deg: number) {
+    const r: Vector3Tuple = [...obj!.rotation];
+    r[axis] = (deg * Math.PI) / 180;
+    updateObject(obj!.id, { rotation: r });
   }
 
-  function handleNameChange(name: string) {
-    if (!obj) return;
-    updateObject(obj.id, { name });
-  }
+  const labels = ['X', 'Y', 'Z'];
+
+  const inputStyle = {
+    width: 55,
+    padding: '0.2rem 0.3rem',
+    background: '#3d3d5c',
+    border: 'none',
+    borderRadius: 3,
+    color: 'white',
+    fontSize: '0.8rem',
+  } as const;
 
   return (
-    <div className={styles.panel}>
-      <div className={styles.header}>
-        <h3 className={styles.title}>Properties</h3>
-      </div>
+    <div style={{
+      width: 240,
+      background: '#25253a',
+      borderLeft: '1px solid #3d3d5c',
+      overflowY: 'auto',
+      flexShrink: 0,
+      padding: '0.75rem',
+      color: 'white',
+    }}>
+      <h3 style={{ fontSize: '0.9rem', marginBottom: '0.75rem', fontWeight: 600 }}>{obj.name}</h3>
 
-      <div className={styles.content}>
-        <div className={styles.section}>
-          <label className={styles.label}>Name</label>
-          <input
-            className={styles.input}
-            value={obj.name}
-            onChange={(e: React.ChangeEvent<HTMLInputElement>) => handleNameChange(e.target.value)}
-          />
-        </div>
-
-        {asset && (
-          <div className={styles.section}>
-            <p className={styles.desc}>{asset.description}</p>
-          </div>
-        )}
-
-        <div className={styles.section}>
-          <label className={styles.label}>Position</label>
-          <div className={styles.vec3}>
-            {['X', 'Y', 'Z'].map((axis, i) => (
-              <div key={axis} className={styles.vec3Field}>
-                <span className={styles.axisLabel}>{axis}</span>
-                <input
-                  className={styles.numInput}
-                  type="number"
-                  step={0.1}
-                  value={obj.position[i]}
-                  onChange={(e: React.ChangeEvent<HTMLInputElement>) =>
-                    handleVec3Change('position', i, e.target.value)
-                  }
-                  onBlur={handleVec3Blur}
-                />
-              </div>
-            ))}
-          </div>
-        </div>
-
-        <div className={styles.section}>
-          <label className={styles.label}>Rotation (°)</label>
-          <div className={styles.vec3}>
-            {['X', 'Y', 'Z'].map((axis, i) => (
-              <div key={axis} className={styles.vec3Field}>
-                <span className={styles.axisLabel}>{axis}</span>
-                <input
-                  className={styles.numInput}
-                  type="number"
-                  step={15}
-                  value={Math.round((obj.rotation[i] * 180) / Math.PI)}
-                  onChange={(e: React.ChangeEvent<HTMLInputElement>) => {
-                    const deg = parseFloat(e.target.value);
-                    if (isNaN(deg)) return;
-                    const rad = (deg * Math.PI) / 180;
-                    const current = [...obj.rotation] as Vector3Tuple;
-                    current[i] = rad;
-                    updateObject(obj.id, { rotation: current });
-                  }}
-                  onBlur={handleVec3Blur}
-                />
-              </div>
-            ))}
-          </div>
-        </div>
-
-        <div className={styles.section}>
-          <label className={styles.label}>Scale</label>
-          <div className={styles.vec3}>
-            {['W', 'H', 'D'].map((axis, i) => (
-              <div key={axis} className={styles.vec3Field}>
-                <span className={styles.axisLabel}>{axis}</span>
-                <input
-                  className={styles.numInput}
-                  type="number"
-                  step={0.1}
-                  min={0.01}
-                  value={obj.scale[i]}
-                  onChange={(e: React.ChangeEvent<HTMLInputElement>) =>
-                    handleVec3Change('scale', i, e.target.value)
-                  }
-                  onBlur={handleVec3Blur}
-                />
-              </div>
-            ))}
-          </div>
-        </div>
-
-        <div className={styles.section}>
-          <label className={styles.label}>Material</label>
-          <div className={styles.materialGrid}>
-            {MATERIAL_PRESETS.map((mat) => (
-              <button
-                key={mat.id}
-                className={styles.materialItem}
-                style={{
-                  borderColor: obj.materialId === mat.id ? 'var(--color-primary)' : 'transparent',
-                }}
-                onClick={() => handleMaterialChange(mat.id)}
-                title={mat.name}
-              >
-                <div
-                  className={styles.materialSwatch}
-                  style={{ backgroundColor: mat.color }}
-                />
-                <span className={styles.materialName}>{mat.name}</span>
-              </button>
-            ))}
-          </div>
-        </div>
-
-        <div className={styles.actions}>
-          <button
-            className={styles.actionBtn}
-            onClick={() => duplicateObject(obj.id)}
-          >
-            <Copy size={14} /> Duplicate
-          </button>
-          <button
-            className={styles.deleteActionBtn}
-            onClick={() => removeObject(obj.id)}
-          >
-            <Trash2 size={14} /> Delete
-          </button>
+      <div style={{ marginBottom: '0.75rem' }}>
+        <label style={{ fontSize: '0.7rem', color: '#aaa', textTransform: 'uppercase', fontWeight: 600 }}>Position</label>
+        <div style={{ display: 'flex', gap: 4, marginTop: 4 }}>
+          {labels.map((l, i) => (
+            <div key={l} style={{ display: 'flex', flexDirection: 'column', alignItems: 'center', gap: 2 }}>
+              <span style={{ fontSize: '0.65rem', color: '#888' }}>{l}</span>
+              <input
+                type="number"
+                step={0.1}
+                value={parseFloat(obj.position[i].toFixed(2))}
+                onChange={(e) => setPosition(i, parseFloat(e.target.value) || 0)}
+                style={inputStyle}
+              />
+            </div>
+          ))}
         </div>
       </div>
+
+      <div style={{ marginBottom: '0.75rem' }}>
+        <label style={{ fontSize: '0.7rem', color: '#aaa', textTransform: 'uppercase', fontWeight: 600 }}>Rotation (deg)</label>
+        <div style={{ display: 'flex', gap: 4, marginTop: 4 }}>
+          {labels.map((l, i) => (
+            <div key={l} style={{ display: 'flex', flexDirection: 'column', alignItems: 'center', gap: 2 }}>
+              <span style={{ fontSize: '0.65rem', color: '#888' }}>{l}</span>
+              <input
+                type="number"
+                step={5}
+                value={parseFloat(((obj.rotation[i] * 180) / Math.PI).toFixed(1))}
+                onChange={(e) => setRotation(i, parseFloat(e.target.value) || 0)}
+                style={inputStyle}
+              />
+            </div>
+          ))}
+        </div>
+      </div>
+
+      <div style={{ marginBottom: '0.75rem' }}>
+        <label style={{ fontSize: '0.7rem', color: '#aaa', textTransform: 'uppercase', fontWeight: 600 }}>Scale</label>
+        <div style={{ display: 'flex', gap: 4, marginTop: 4 }}>
+          {labels.map((l, i) => (
+            <div key={l} style={{ display: 'flex', flexDirection: 'column', alignItems: 'center', gap: 2 }}>
+              <span style={{ fontSize: '0.65rem', color: '#888' }}>{l}</span>
+              <input
+                type="number"
+                step={0.1}
+                value={parseFloat(obj.scale[i].toFixed(2))}
+                onChange={(e) => setScale(i, parseFloat(e.target.value) || 0.1)}
+                style={inputStyle}
+              />
+            </div>
+          ))}
+        </div>
+      </div>
+
+      <div style={{ marginBottom: '0.75rem' }}>
+        <label style={{ fontSize: '0.7rem', color: '#aaa', textTransform: 'uppercase', fontWeight: 600, marginBottom: 4, display: 'block' }}>Material</label>
+        <div style={{ display: 'flex', flexWrap: 'wrap', gap: 4 }}>
+          <button
+            onClick={() => updateObject(obj.id, { materialId: '' })}
+            style={{
+              width: 28,
+              height: 28,
+              borderRadius: 4,
+              border: !obj.materialId ? '2px solid #2563eb' : '2px solid transparent',
+              background: '#777',
+              cursor: 'pointer',
+              fontSize: '0.6rem',
+              color: 'white',
+            }}
+            title="Default"
+          >Def</button>
+          {MATERIAL_PRESETS.map((mat) => (
+            <button
+              key={mat.id}
+              onClick={() => updateObject(obj.id, { materialId: mat.id })}
+              title={mat.name}
+              style={{
+                width: 28,
+                height: 28,
+                borderRadius: 4,
+                border: obj.materialId === mat.id ? '2px solid #2563eb' : '2px solid transparent',
+                background: mat.color,
+                cursor: 'pointer',
+              }}
+            />
+          ))}
+        </div>
+      </div>
+
+      <label style={{ display: 'flex', alignItems: 'center', gap: 6, fontSize: '0.8rem', cursor: 'pointer', color: '#ccc' }}>
+        <input
+          type="checkbox"
+          checked={obj.visible}
+          onChange={(e) => updateObject(obj.id, { visible: e.target.checked })}
+        />
+        Visible
+      </label>
     </div>
   );
 }
