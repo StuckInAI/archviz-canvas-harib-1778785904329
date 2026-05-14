@@ -8,13 +8,15 @@ import AssetSidebar from '@/components/editor/AssetSidebar';
 import TopToolbar from '@/components/editor/TopToolbar';
 import BottomBar from '@/components/editor/BottomBar';
 import PropertiesPanel from '@/components/editor/PropertiesPanel';
-import SceneCanvas from '@/components/three/SceneCanvas';
 import TutorialOverlay from '@/components/editor/TutorialOverlay';
+import SceneCanvas from '@/components/three/SceneCanvas';
 import styles from './EditorPage.module.css';
 
 export default function EditorPage() {
   const { projectId } = useParams<{ projectId: string }>();
   const navigate = useNavigate();
+  const [showTutorial, setShowTutorial] = useState(false);
+
   const {
     setProjectId,
     setProjectName,
@@ -22,10 +24,9 @@ export default function EditorPage() {
     projectName,
     objects,
     selectedObjectId,
-    markClean,
+    sidebarOpen,
+    propertiesPanelOpen,
   } = useEditorStore();
-
-  const [showTutorial, setShowTutorial] = useState(false);
 
   useAutoSave();
   useKeyboardShortcuts();
@@ -42,10 +43,10 @@ export default function EditorPage() {
     }
     setProjectId(project.id);
     setProjectName(project.name);
-    setObjects(project.objects);
+    setObjects(project.objects || []);
 
-    const hasSeenTutorial = localStorage.getItem('eduarch3d_tutorial_seen');
-    if (!hasSeenTutorial) {
+    const tutorialSeen = localStorage.getItem('eduarch3d_tutorial_seen');
+    if (!tutorialSeen) {
       setShowTutorial(true);
     }
   }, [projectId, navigate, setProjectId, setProjectName, setObjects]);
@@ -56,11 +57,11 @@ export default function EditorPage() {
       id: projectId,
       name: projectName,
       description: '',
-      objects: objects,
+      objects,
       createdAt: new Date().toISOString(),
       updatedAt: new Date().toISOString(),
     });
-    markClean();
+    useEditorStore.getState().markClean();
   }
 
   function handleDismissTutorial() {
@@ -71,12 +72,12 @@ export default function EditorPage() {
   return (
     <div className={styles.editor}>
       <TopToolbar onSave={handleSave} onBack={() => navigate('/dashboard')} />
-      <div className={styles.middle}>
-        <AssetSidebar />
+      <div className={styles.main}>
+        {sidebarOpen && <AssetSidebar />}
         <div className={styles.canvas}>
           <SceneCanvas />
         </div>
-        {selectedObjectId && <PropertiesPanel />}
+        {propertiesPanelOpen && selectedObjectId && <PropertiesPanel />}
       </div>
       <BottomBar />
       {showTutorial && <TutorialOverlay onDismiss={handleDismissTutorial} />}

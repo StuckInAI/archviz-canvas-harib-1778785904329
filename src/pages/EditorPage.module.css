@@ -1,20 +1,21 @@
 .editor {
   display: flex;
   flex-direction: column;
-  width: 100%;
+  width: 100vw;
   height: 100vh;
-  background: #111119;
   overflow: hidden;
+  background: #1a1a2e;
 }
 
-.middle {
+.main {
   display: flex;
   flex: 1;
+  min-height: 0;
   overflow: hidden;
 }
 
 .canvas {
   flex: 1;
+  min-width: 0;
   position: relative;
-  overflow: hidden;
 }
