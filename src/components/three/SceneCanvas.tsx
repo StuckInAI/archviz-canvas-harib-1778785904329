@@ -8,13 +8,13 @@ export default function SceneCanvas() {
 
   const isOrtho = viewMode !== 'perspective';
 
-  let cameraPos: [number, number, number] = [10, 10, 10];
+  let cameraPos: [number, number, number] = [12, 10, 12];
   if (viewMode === 'top') {
-    cameraPos = [0, 20, 0.001];
+    cameraPos = [0, 25, 0.001];
   } else if (viewMode === 'front') {
-    cameraPos = [0, 5, 20];
+    cameraPos = [0, 5, 25];
   } else if (viewMode === 'side') {
-    cameraPos = [20, 5, 0];
+    cameraPos = [25, 5, 0];
   }
 
   return (
@@ -28,14 +28,15 @@ export default function SceneCanvas() {
           far: 500,
         }}
         orthographic={isOrtho}
-        gl={{ antialias: true }}
+        gl={{
+          antialias: true,
+          toneMapping: 3,
+          toneMappingExposure: 1.1,
+        }}
         dpr={[1, 2]}
         style={{ width: '100%', height: '100%' }}
         onPointerMissed={() => {
           useEditorStore.getState().selectObject(null);
-        }}
-        onCreated={({ gl }) => {
-          gl.setClearColor('#2a2a3e');
         }}
       >
         <Suspense fallback={null}>
