@@ -11,50 +11,52 @@ export interface ProjectData {
 
 const STORAGE_KEY = 'eduarch3d_projects';
 
-function getProjects(): ProjectData[] {
+function getAllProjects(): ProjectData[] {
   try {
     const raw = localStorage.getItem(STORAGE_KEY);
     if (!raw) return [];
-    return JSON.parse(raw);
+    return JSON.parse(raw) as ProjectData[];
   } catch {
     return [];
   }
 }
 
-function setProjects(projects: ProjectData[]) {
+function setAllProjects(projects: ProjectData[]) {
   localStorage.setItem(STORAGE_KEY, JSON.stringify(projects));
 }
 
-export function getAllProjects(): ProjectData[] {
-  return getProjects();
+export function listProjects(): ProjectData[] {
+  return getAllProjects().sort(
+    (a, b) => new Date(b.updatedAt).getTime() - new Date(a.updatedAt).getTime()
+  );
 }
 
 export function getProject(id: string): ProjectData | undefined {
-  return getProjects().find((p) => p.id === id);
+  return getAllProjects().find((p) => p.id === id);
 }
 
 export function saveProject(project: ProjectData) {
-  const projects = getProjects();
+  const projects = getAllProjects();
   const index = projects.findIndex((p) => p.id === project.id);
   if (index >= 0) {
     projects[index] = { ...project, updatedAt: new Date().toISOString() };
   } else {
-    projects.push(project);
+    projects.push({ ...project, createdAt: new Date().toISOString(), updatedAt: new Date().toISOString() });
   }
-  setProjects(projects);
+  setAllProjects(projects);
 }
 
 export function deleteProject(id: string) {
-  const projects = getProjects().filter((p) => p.id !== id);
-  setProjects(projects);
+  const projects = getAllProjects().filter((p) => p.id !== id);
+  setAllProjects(projects);
 }
 
-export function createProject(name: string, description: string, objects: SceneObject[] = []): ProjectData {
+export function createProject(name: string, description: string = ''): ProjectData {
   const project: ProjectData = {
-    id: crypto.randomUUID?.() || Math.random().toString(36).slice(2),
+    id: crypto.randomUUID?.() ?? Math.random().toString(36).slice(2),
     name,
     description,
-    objects,
+    objects: [],
     createdAt: new Date().toISOString(),
     updatedAt: new Date().toISOString(),
   };

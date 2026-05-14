@@ -4,12 +4,12 @@ import { useEditorStore } from '@/hooks/useEditorStore';
 import { useAutoSave } from '@/hooks/useAutoSave';
 import { useKeyboardShortcuts } from '@/hooks/useKeyboardShortcuts';
 import { getProject, saveProject } from '@/lib/storage';
-import TopToolbar from '@/components/editor/TopToolbar';
 import AssetSidebar from '@/components/editor/AssetSidebar';
-import PropertiesPanel from '@/components/editor/PropertiesPanel';
+import TopToolbar from '@/components/editor/TopToolbar';
 import BottomBar from '@/components/editor/BottomBar';
-import SceneCanvas from '@/components/three/SceneCanvas';
+import PropertiesPanel from '@/components/editor/PropertiesPanel';
 import TutorialOverlay from '@/components/editor/TutorialOverlay';
+import SceneCanvas from '@/components/three/SceneCanvas';
 import styles from './EditorPage.module.css';
 
 export default function EditorPage() {
@@ -24,8 +24,6 @@ export default function EditorPage() {
     projectName,
     objects,
     selectedObjectId,
-    sidebarOpen,
-    propertiesPanelOpen,
     markClean,
   } = useEditorStore();
 
@@ -71,14 +69,14 @@ export default function EditorPage() {
   }
 
   return (
-    <div className={styles.editor}>
+    <div className={styles.editorPage}>
       <TopToolbar onSave={handleSave} onBack={() => navigate('/dashboard')} />
-      <div className={styles.middle}>
-        {sidebarOpen && <AssetSidebar />}
+      <div className={styles.mainArea}>
+        <AssetSidebar />
         <div className={styles.canvasArea}>
           <SceneCanvas />
         </div>
-        {propertiesPanelOpen && selectedObjectId && <PropertiesPanel />}
+        {selectedObjectId && <PropertiesPanel />}
       </div>
       <BottomBar />
       {showTutorial && <TutorialOverlay onDismiss={handleDismissTutorial} />}

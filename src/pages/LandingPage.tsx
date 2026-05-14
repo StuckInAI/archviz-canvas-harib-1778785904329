@@ -1,5 +1,5 @@
 import { useNavigate } from 'react-router-dom';
-import { Building2, ArrowRight, Blocks, Layers, Lightbulb, BookOpen } from 'lucide-react';
+import { Building2, ArrowRight, Layers, Palette, Box } from 'lucide-react';
 import styles from './LandingPage.module.css';
 
 export default function LandingPage() {
@@ -7,53 +7,38 @@ export default function LandingPage() {
 
   return (
     <div className={styles.page}>
-      <header className={styles.header}>
-        <div className={styles.logo}>
-          <Building2 size={28} />
-          <span>EduArch3D</span>
+      <div className={styles.hero}>
+        <div className={styles.icon}>
+          <Building2 size={48} />
         </div>
-        <button className={styles.ctaBtn} onClick={() => navigate('/dashboard')}>
-          Open Dashboard <ArrowRight size={16} />
-        </button>
-      </header>
-
-      <section className={styles.hero}>
-        <h1 className={styles.heroTitle}>Learn Architecture in 3D</h1>
-        <p className={styles.heroSub}>
-          Build, explore, and understand architectural concepts with an interactive 3D design canvas.
-          Place walls, columns, roofs, and furniture to create buildings from scratch.
+        <h1 className={styles.title}>EduArch3D</h1>
+        <p className={styles.subtitle}>
+          A browser-based 3D architectural design tool for learning and
+          experimentation. Build rooms, houses, and buildings with drag-and-drop
+          elements.
         </p>
-        <button className={styles.heroBtn} onClick={() => navigate('/dashboard')}>
-          Start Building <ArrowRight size={18} />
+        <button className={styles.cta} onClick={() => navigate('/dashboard')}>
+          Open Dashboard <ArrowRight size={18} />
         </button>
-      </section>
+      </div>
 
-      <section className={styles.features}>
+      <div className={styles.features}>
         <div className={styles.feature}>
-          <Blocks size={32} className={styles.featureIcon} />
-          <h3>Drag & Place Assets</h3>
-          <p>Choose from structural elements, furniture, exterior objects, and decorations.</p>
+          <Box size={24} />
+          <h3>3D Building Blocks</h3>
+          <p>Walls, floors, columns, roofs, doors, windows and more</p>
         </div>
         <div className={styles.feature}>
-          <Layers size={32} className={styles.featureIcon} />
-          <h3>Transform & Style</h3>
-          <p>Move, rotate, scale objects. Apply materials like brick, wood, marble, and glass.</p>
+          <Layers size={24} />
+          <h3>Scene Management</h3>
+          <p>Multiple views, undo/redo, grid snapping, keyboard shortcuts</p>
         </div>
         <div className={styles.feature}>
-          <Lightbulb size={32} className={styles.featureIcon} />
-          <h3>Multiple Views</h3>
-          <p>Switch between perspective, top, front, and side views for precise placement.</p>
+          <Palette size={24} />
+          <h3>Material Library</h3>
+          <p>Concrete, brick, wood, marble, glass, steel and more</p>
         </div>
-        <div className={styles.feature}>
-          <BookOpen size={32} className={styles.featureIcon} />
-          <h3>Educational Focus</h3>
-          <p>Perfect for students learning architectural design fundamentals.</p>
-        </div>
-      </section>
-
-      <footer className={styles.footer}>
-        <p>EduArch3D — Educational 3D Architecture Tool</p>
-      </footer>
+      </div>
     </div>
   );
 }

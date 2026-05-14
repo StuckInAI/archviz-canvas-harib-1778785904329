@@ -10,11 +10,13 @@ export default defineConfig({
     },
   },
   build: {
-    outDir: 'dist',
-    sourcemap: false,
-  },
-  server: {
-    host: true,
-    port: 5173,
+    rollupOptions: {
+      output: {
+        manualChunks: {
+          three: ['three'],
+          'react-three': ['@react-three/fiber', '@react-three/drei'],
+        },
+      },
+    },
   },
 });
