@@ -2,6 +2,7 @@ import { useCallback } from 'react';
 import { OrbitControls, Grid, ContactShadows } from '@react-three/drei';
 import { useEditorStore } from '../../hooks/useEditorStore';
 import SceneObjectMesh from './SceneObjectMesh';
+import TransformableObject from './TransformableObject';
 
 export default function SceneContent() {
   const objects = useEditorStore((s) => s.objects);
@@ -13,6 +14,8 @@ export default function SceneContent() {
   const handleMissedClick = useCallback(() => {
     selectObject(null);
   }, [selectObject]);
+
+  const selectedObj = objects.find((o) => o.id === selectedObjectId);
 
   return (
     <>
@@ -70,15 +73,28 @@ export default function SceneContent() {
         far={10}
       />
 
-      {/* Scene Objects */}
-      {objects.map((obj) => (
-        <SceneObjectMesh
-          key={obj.id}
-          obj={obj}
-          isSelected={obj.id === selectedObjectId}
-          onSelect={() => selectObject(obj.id)}
-        />
-      ))}
+      {/* Non-selected scene objects */}
+      {objects
+        .filter((obj) => obj.id !== selectedObjectId)
+        .map((obj) => (
+          <SceneObjectMesh
+            key={obj.id}
+            obj={obj}
+            isSelected={false}
+            onSelect={() => selectObject(obj.id)}
+          />
+        ))}
+
+      {/* Selected object with transform controls */}
+      {selectedObj && (
+        <TransformableObject key={selectedObj.id + '-transform'} obj={selectedObj}>
+          <SceneObjectMesh
+            obj={selectedObj}
+            isSelected={true}
+            onSelect={() => selectObject(selectedObj.id)}
+          />
+        </TransformableObject>
+      )}
 
       {/* Orbit Controls */}
       <OrbitControls

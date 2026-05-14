@@ -1,6 +1,6 @@
 import { useEditorStore } from '../../hooks/useEditorStore';
 import { MATERIAL_PRESETS } from '../../lib/assets';
-import type { SceneObject, Vector3Tuple } from '../../hooks/useEditorStore';
+import type { Vector3Tuple } from '../../hooks/useEditorStore';
 
 export default function PropertiesPanel() {
   const selectedObjectId = useEditorStore((s) => s.selectedObjectId);
@@ -81,7 +81,7 @@ export default function PropertiesPanel() {
               style={inputStyle}
               type="number"
               step={0.1}
-              value={v.toFixed(2)}
+              value={parseFloat(v.toFixed(2))}
               onChange={(e) => handleVectorChange('position', i, e.target.value)}
               onBlur={handleBlur}
             />
@@ -99,7 +99,7 @@ export default function PropertiesPanel() {
               style={inputStyle}
               type="number"
               step={0.1}
-              value={v.toFixed(2)}
+              value={parseFloat(v.toFixed(2))}
               onChange={(e) => handleVectorChange('rotation', i, e.target.value)}
               onBlur={handleBlur}
             />
@@ -117,7 +117,7 @@ export default function PropertiesPanel() {
               style={inputStyle}
               type="number"
               step={0.1}
-              value={v.toFixed(2)}
+              value={parseFloat(v.toFixed(2))}
               onChange={(e) => handleVectorChange('scale', i, e.target.value)}
               onBlur={handleBlur}
             />
@@ -159,6 +159,25 @@ export default function PropertiesPanel() {
             />
           ))}
         </div>
+      </div>
+
+      {/* Visibility */}
+      <div>
+        <label style={labelStyle}>Visibility</label>
+        <button
+          onClick={() => { updateObject(obj.id, { visible: !obj.visible }); pushHistory(); }}
+          style={{
+            padding: '4px 10px',
+            borderRadius: 4,
+            fontSize: '0.78rem',
+            cursor: 'pointer',
+            border: '1px solid #374151',
+            color: obj.visible ? '#10b981' : '#ef4444',
+            background: '#1f2937',
+          }}
+        >
+          {obj.visible ? '👁 Visible' : '🚫 Hidden'}
+        </button>
       </div>
 
       {/* Actions */}

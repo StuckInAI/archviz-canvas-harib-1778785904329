@@ -43,6 +43,34 @@ export default function SceneObjectMesh({ obj, isSelected, onSelect }: SceneObje
 
   if (!obj.visible) return null;
 
+  // When selected, render without group transform (TransformableObject will handle it)
+  if (isSelected) {
+    return (
+      <>
+        <mesh
+          ref={meshRef}
+          name={obj.id}
+          geometry={geometry}
+          castShadow
+          receiveShadow
+          onClick={(e: any) => {
+            e.stopPropagation();
+            onSelect();
+          }}
+        >
+          <meshStandardMaterial
+            color={matColor}
+            roughness={roughness}
+            metalness={metalness}
+          />
+        </mesh>
+        <lineSegments geometry={edgesGeo} renderOrder={999}>
+          <lineBasicMaterial color="#2563eb" linewidth={2} />
+        </lineSegments>
+      </>
+    );
+  }
+
   return (
     <group
       position={obj.position}
@@ -66,11 +94,6 @@ export default function SceneObjectMesh({ obj, isSelected, onSelect }: SceneObje
           metalness={metalness}
         />
       </mesh>
-      {isSelected && (
-        <lineSegments geometry={edgesGeo} renderOrder={999}>
-          <lineBasicMaterial color="#2563eb" linewidth={2} />
-        </lineSegments>
-      )}
     </group>
   );
 }

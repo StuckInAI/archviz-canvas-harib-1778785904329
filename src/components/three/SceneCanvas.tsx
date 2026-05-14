@@ -31,6 +31,9 @@ export default function SceneCanvas() {
         gl={{ antialias: true }}
         dpr={[1, 2]}
         style={{ width: '100%', height: '100%' }}
+        onPointerMissed={() => {
+          useEditorStore.getState().selectObject(null);
+        }}
         onCreated={({ gl }) => {
           gl.setClearColor('#2a2a3e');
         }}
