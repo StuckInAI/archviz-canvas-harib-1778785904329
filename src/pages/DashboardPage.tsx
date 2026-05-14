@@ -1,24 +1,25 @@
 import { useState, useEffect } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { v4 as uuidv4 } from 'uuid';
-import { Plus, Trash2, FolderOpen, Building2 } from 'lucide-react';
-import { loadAllProjects, saveProject, deleteProject, ProjectData } from '@/lib/storage';
-import { SAMPLE_PROJECTS } from '@/lib/sampleProjects';
+import { Plus, Trash2, ArrowLeft } from 'lucide-react';
+import { loadProjects, deleteProject, saveProject } from '@/lib/storage';
+import { SAMPLE_OBJECTS } from '@/lib/sampleProjects';
+import { Project } from '@/types';
 import styles from './DashboardPage.module.css';
 
 export default function DashboardPage() {
   const navigate = useNavigate();
-  const [projects, setProjects] = useState<ProjectData[]>([]);
+  const [projects, setProjects] = useState<Project[]>([]);
 
   useEffect(() => {
-    setProjects(loadAllProjects());
+    setProjects(loadProjects());
   }, []);
 
-  function handleCreate() {
+  function handleNew() {
     const id = uuidv4();
-    const project: ProjectData = {
+    const project: Project = {
       id,
-      name: 'Untitled Project',
+      name: 'New Project',
       description: '',
       objects: [],
       createdAt: new Date().toISOString(),
@@ -28,83 +29,74 @@ export default function DashboardPage() {
     navigate(`/editor/${id}`);
   }
 
-  function handleDelete(id: string) {
-    deleteProject(id);
-    setProjects(loadAllProjects());
-  }
-
-  function handleLoadSample(sampleIndex: number) {
-    const sample = SAMPLE_PROJECTS[sampleIndex];
-    if (!sample) return;
+  function handleLoadSample() {
     const id = uuidv4();
-    const project: ProjectData = {
+    const project: Project = {
       id,
-      name: sample.name,
-      description: sample.description,
-      objects: sample.objects,
+      name: 'Sample House',
+      description: 'A sample project with walls and floor',
+      objects: [...SAMPLE_OBJECTS],
       createdAt: new Date().toISOString(),
       updatedAt: new Date().toISOString(),
     };
     saveProject(project);
+    setProjects(loadProjects());
     navigate(`/editor/${id}`);
+  }
+
+  function handleDelete(id: string) {
+    deleteProject(id);
+    setProjects(loadProjects());
   }
 
   return (
     <div className={styles.page}>
-      <header className={styles.header}>
-        <div className={styles.headerLeft}>
-          <Building2 size={28} />
-          <h1 className={styles.headerTitle}>EduArch3D Dashboard</h1>
-        </div>
-        <button className={styles.createBtn} onClick={handleCreate}>
-          <Plus size={18} /> New Project
+      <div className={styles.header}>
+        <button className={styles.backBtn} onClick={() => navigate('/')}>
+          <ArrowLeft size={18} />
+          <span>Home</span>
         </button>
-      </header>
+        <h1 className={styles.title}>My Projects</h1>
+        <div className={styles.headerActions}>
+          <button className={styles.sampleBtn} onClick={handleLoadSample}>
+            Load Sample
+          </button>
+          <button className={styles.newBtn} onClick={handleNew}>
+            <Plus size={16} /> New Project
+          </button>
+        </div>
+      </div>
 
-      <main className={styles.main}>
-        <section className={styles.section}>
-          <h2 className={styles.sectionTitle}>Your Projects</h2>
-          {projects.length === 0 ? (
-            <p className={styles.empty}>No projects yet. Create one or load a sample!</p>
-          ) : (
-            <div className={styles.grid}>
-              {projects.map((p) => (
-                <div key={p.id} className={styles.card}>
-                  <div className={styles.cardBody} onClick={() => navigate(`/editor/${p.id}`)}>
-                    <FolderOpen size={24} className={styles.cardIcon} />
-                    <h3 className={styles.cardTitle}>{p.name}</h3>
-                    <p className={styles.cardMeta}>
-                      {p.objects.length} objects • {new Date(p.updatedAt).toLocaleDateString()}
-                    </p>
-                  </div>
-                  <button
-                    className={styles.deleteBtn}
-                    onClick={() => handleDelete(p.id)}
-                    title="Delete project"
-                  >
-                    <Trash2 size={16} />
-                  </button>
-                </div>
-              ))}
-            </div>
-          )}
-        </section>
-
-        <section className={styles.section}>
-          <h2 className={styles.sectionTitle}>Sample Projects</h2>
-          <div className={styles.grid}>
-            {SAMPLE_PROJECTS.map((sample, i) => (
-              <div key={i} className={styles.card}>
-                <div className={styles.cardBody} onClick={() => handleLoadSample(i)}>
-                  <Building2 size={24} className={styles.cardIcon} />
-                  <h3 className={styles.cardTitle}>{sample.name}</h3>
-                  <p className={styles.cardMeta}>{sample.description}</p>
-                </div>
-              </div>
-            ))}
+      <div className={styles.grid}>
+        {projects.length === 0 && (
+          <div className={styles.empty}>
+            <p>No projects yet. Create a new one or load a sample!</p>
           </div>
-        </section>
-      </main>
+        )}
+        {projects.map((p) => (
+          <div key={p.id} className={styles.card}>
+            <div
+              className={styles.cardBody}
+              onClick={() => navigate(`/editor/${p.id}`)}
+            >
+              <h3 className={styles.cardTitle}>{p.name}</h3>
+              <p className={styles.cardMeta}>
+                {p.objects.length} objects · Updated{' '}
+                {new Date(p.updatedAt).toLocaleDateString()}
+              </p>
+            </div>
+            <div className={styles.cardActions}>
+              <button
+                className={styles.deleteBtn}
+                onClick={() => handleDelete(p.id)}
+                title="Delete project"
+              >
+                <Trash2 size={14} />
+              </button>
+            </div>
+          </div>
+        ))}
+      </div>
     </div>
   );
 }

@@ -1,10 +1,10 @@
-export type AssetCategory = 'structural' | 'openings' | 'furniture' | 'decoration' | 'exterior';
-
 export type Vector3Tuple = [number, number, number];
 
 export type TransformMode = 'translate' | 'rotate' | 'scale';
 
 export type ViewMode = 'perspective' | 'top' | 'front' | 'side';
+
+export type AssetCategory = 'structural' | 'openings' | 'furniture' | 'exterior' | 'decorative';
 
 export interface SceneObject {
   id: string;
@@ -15,4 +15,13 @@ export interface SceneObject {
   scale: Vector3Tuple;
   materialId: string;
   visible: boolean;
+}
+
+export interface Project {
+  id: string;
+  name: string;
+  description: string;
+  objects: SceneObject[];
+  createdAt: string;
+  updatedAt: string;
 }

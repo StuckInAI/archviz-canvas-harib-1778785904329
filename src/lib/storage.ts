@@ -1,58 +1,47 @@
-import { SceneObject } from '@/types';
+import { Project, SceneObject } from '@/types';
 
-export interface ProjectData {
-  id: string;
-  name: string;
-  description: string;
-  objects: SceneObject[];
-  createdAt: string;
-  updatedAt: string;
-}
+const PROJECTS_KEY = 'eduarch3d_projects';
 
-const STORAGE_KEY = 'eduarch3d_projects';
-const TUTORIAL_KEY = 'eduarch3d_tutorial_seen';
-
-function getProjects(): ProjectData[] {
+export function loadProjects(): Project[] {
   try {
-    const raw = localStorage.getItem(STORAGE_KEY);
-    return raw ? JSON.parse(raw) : [];
+    const raw = localStorage.getItem(PROJECTS_KEY);
+    if (!raw) return [];
+    return JSON.parse(raw) as Project[];
   } catch {
     return [];
   }
 }
 
-function setProjects(projects: ProjectData[]) {
-  localStorage.setItem(STORAGE_KEY, JSON.stringify(projects));
-}
-
-export function loadAllProjects(): ProjectData[] {
-  return getProjects();
-}
-
-export function loadProject(id: string): ProjectData | undefined {
-  return getProjects().find((p) => p.id === id);
-}
-
-export function saveProject(project: ProjectData) {
-  const projects = getProjects();
+export function saveProject(project: Project): void {
+  const projects = loadProjects();
   const idx = projects.findIndex((p) => p.id === project.id);
   if (idx >= 0) {
-    projects[idx] = { ...project, updatedAt: new Date().toISOString() };
+    projects[idx] = project;
   } else {
     projects.push(project);
   }
-  setProjects(projects);
+  localStorage.setItem(PROJECTS_KEY, JSON.stringify(projects));
 }
 
-export function deleteProject(id: string) {
-  const projects = getProjects().filter((p) => p.id !== id);
-  setProjects(projects);
+export function deleteProject(id: string): void {
+  const projects = loadProjects().filter((p) => p.id !== id);
+  localStorage.setItem(PROJECTS_KEY, JSON.stringify(projects));
 }
 
-export function hasTutorialBeenSeen(): boolean {
-  return localStorage.getItem(TUTORIAL_KEY) === 'true';
+export function loadProject(id: string): Project | undefined {
+  return loadProjects().find((p) => p.id === id);
 }
 
-export function markTutorialSeen() {
-  localStorage.setItem(TUTORIAL_KEY, 'true');
+export function createProject(name: string, description: string, objects: SceneObject[] = []): Project {
+  const { v4: uuidv4 } = require('uuid') as { v4: () => string };
+  const project: Project = {
+    id: uuidv4(),
+    name,
+    description,
+    objects,
+    createdAt: new Date().toISOString(),
+    updatedAt: new Date().toISOString(),
+  };
+  saveProject(project);
+  return project;
 }
