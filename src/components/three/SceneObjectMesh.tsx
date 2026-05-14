@@ -1,5 +1,6 @@
 import { useRef, useMemo } from 'react';
 import * as THREE from 'three';
+import { ThreeEvent } from '@react-three/fiber';
 import { SceneObject } from '@/types';
 import { getAssetById, getMaterialById } from '@/lib/assets';
 
@@ -54,7 +55,7 @@ export default function SceneObjectMesh({ obj, isSelected, onSelect }: SceneObje
         geometry={geometry}
         castShadow
         receiveShadow
-        onClick={(e) => {
+        onClick={(e: ThreeEvent<MouseEvent>) => {
           e.stopPropagation();
           onSelect();
         }}
