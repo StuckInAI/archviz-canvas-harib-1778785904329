@@ -8,24 +8,24 @@ import AssetSidebar from '@/components/editor/AssetSidebar';
 import TopToolbar from '@/components/editor/TopToolbar';
 import BottomBar from '@/components/editor/BottomBar';
 import PropertiesPanel from '@/components/editor/PropertiesPanel';
-import TutorialOverlay from '@/components/editor/TutorialOverlay';
 import SceneCanvas from '@/components/three/SceneCanvas';
+import TutorialOverlay from '@/components/editor/TutorialOverlay';
 import styles from './EditorPage.module.css';
 
 export default function EditorPage() {
   const { projectId } = useParams<{ projectId: string }>();
   const navigate = useNavigate();
-  const [showTutorial, setShowTutorial] = useState(false);
-
   const {
     setProjectId,
     setProjectName,
     setObjects,
     projectName,
     objects,
-    markClean,
     selectedObjectId,
+    markClean,
   } = useEditorStore();
+
+  const [showTutorial, setShowTutorial] = useState(false);
 
   useAutoSave();
   useKeyboardShortcuts();
@@ -40,12 +40,12 @@ export default function EditorPage() {
       navigate('/dashboard');
       return;
     }
-    setProjectId(projectId);
+    setProjectId(project.id);
     setProjectName(project.name);
     setObjects(project.objects);
 
-    const tutorialSeen = localStorage.getItem('eduarch3d_tutorial_seen');
-    if (!tutorialSeen) {
+    const hasSeenTutorial = localStorage.getItem('eduarch3d_tutorial_seen');
+    if (!hasSeenTutorial) {
       setShowTutorial(true);
     }
   }, [projectId, navigate, setProjectId, setProjectName, setObjects]);
@@ -71,9 +71,9 @@ export default function EditorPage() {
   return (
     <div className={styles.editor}>
       <TopToolbar onSave={handleSave} onBack={() => navigate('/dashboard')} />
-      <div className={styles.main}>
+      <div className={styles.middle}>
         <AssetSidebar />
-        <div className={styles.viewport}>
+        <div className={styles.canvas}>
           <SceneCanvas />
         </div>
         {selectedObjectId && <PropertiesPanel />}

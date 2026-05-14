@@ -1,9 +1,7 @@
-import { ThreeElements } from '@react-three/fiber';
+import '@react-three/fiber';
 
-declare global {
-  namespace JSX {
-    interface IntrinsicElements extends ThreeElements {}
+declare module '@react-three/fiber' {
+  interface ThreeElements {
+    hemisphereLight: any;
   }
 }
-
-export {};

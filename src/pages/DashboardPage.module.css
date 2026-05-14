@@ -1,117 +1,129 @@
 .page {
-  min-height: 100vh;
-  background: var(--color-bg);
-  padding: var(--spacing-xl);
-}
-
-.container {
-  max-width: 960px;
-  margin: 0 auto;
+  width: 100%;
+  height: 100vh;
+  display: flex;
+  flex-direction: column;
+  background: #f9fafb;
+  overflow: hidden;
 }
 
 .header {
   display: flex;
   align-items: center;
   justify-content: space-between;
-  margin-bottom: var(--spacing-xl);
+  padding: var(--spacing-md) var(--spacing-xl);
+  background: white;
+  border-bottom: 1px solid var(--color-border);
 }
 
-.title {
-  font-size: 1.6rem;
+.brand {
+  display: flex;
+  align-items: center;
+  gap: var(--spacing-sm);
+  color: var(--color-primary);
+}
+
+.brandName {
+  font-size: 1.2rem;
   font-weight: 700;
   color: var(--color-text);
 }
 
-.newBtn {
+.main {
+  flex: 1;
+  padding: var(--spacing-xl);
+  overflow-y: auto;
+  max-width: 960px;
+  margin: 0 auto;
+  width: 100%;
+}
+
+.actions {
+  display: flex;
+  gap: var(--spacing-md);
+  margin-bottom: var(--spacing-xl);
+}
+
+.newBtn,
+.sampleBtn {
   display: flex;
   align-items: center;
-  gap: var(--spacing-xs);
+  gap: var(--spacing-sm);
   padding: var(--spacing-sm) var(--spacing-lg);
+  border-radius: var(--radius-md);
+  font-weight: 600;
+  font-size: 0.95rem;
+  transition: background var(--transition-fast);
+}
+
+.newBtn {
   background: var(--color-primary);
   color: white;
-  font-weight: 600;
-  border-radius: var(--radius-md);
-  transition: background var(--transition-fast);
 }
 
 .newBtn:hover {
   background: var(--color-primary-hover);
 }
 
-.section {
-  margin-bottom: var(--spacing-xl);
+.sampleBtn {
+  background: var(--color-border);
+  color: var(--color-text);
 }
 
-.sectionTitle {
-  font-size: 1.1rem;
-  font-weight: 600;
-  color: var(--color-text);
-  margin-bottom: var(--spacing-md);
+.sampleBtn:hover {
+  background: #d1d5db;
+}
+
+.empty {
+  text-align: center;
+  padding: var(--spacing-xl);
+  color: var(--color-text-secondary);
 }
 
 .grid {
   display: grid;
-  grid-template-columns: repeat(auto-fill, minmax(240px, 1fr));
+  grid-template-columns: repeat(auto-fill, minmax(280px, 1fr));
   gap: var(--spacing-md);
 }
 
 .card {
-  position: relative;
+  display: flex;
+  align-items: center;
   background: white;
   border: 1px solid var(--color-border);
   border-radius: var(--radius-lg);
   overflow: hidden;
-  cursor: pointer;
-  transition: box-shadow var(--transition-fast), transform var(--transition-fast);
+  transition: box-shadow var(--transition-fast);
 }
 
 .card:hover {
   box-shadow: var(--shadow-md);
-  transform: translateY(-2px);
 }
 
 .cardBody {
-  padding: var(--spacing-lg);
-}
-
-.cardIcon {
-  color: var(--color-primary);
-  margin-bottom: var(--spacing-sm);
+  flex: 1;
+  padding: var(--spacing-md);
+  cursor: pointer;
 }
 
 .cardTitle {
   font-size: 1rem;
   font-weight: 600;
-  margin-bottom: var(--spacing-xs);
+  color: var(--color-text);
+  margin-bottom: 4px;
 }
 
-.cardDesc {
-  font-size: 0.85rem;
+.cardMeta {
+  font-size: 0.82rem;
   color: var(--color-text-secondary);
 }
 
 .deleteBtn {
-  position: absolute;
-  top: var(--spacing-sm);
-  right: var(--spacing-sm);
-  width: 28px;
-  height: 28px;
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  border-radius: var(--radius-sm);
-  color: var(--color-danger);
-  background: rgba(239, 68, 68, 0.08);
-  transition: background var(--transition-fast);
+  padding: var(--spacing-md);
+  color: var(--color-text-secondary);
+  transition: color var(--transition-fast);
 }
 
 .deleteBtn:hover {
-  background: rgba(239, 68, 68, 0.2);
-}
-
-.empty {
-  color: var(--color-text-secondary);
-  font-size: 0.95rem;
-  text-align: center;
-  padding: var(--spacing-xl);
+  color: var(--color-danger);
 }

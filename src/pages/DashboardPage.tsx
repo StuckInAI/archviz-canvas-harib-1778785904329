@@ -1,8 +1,8 @@
 import { useState, useEffect } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { v4 as uuidv4 } from 'uuid';
-import { Plus, Trash2, FolderOpen, BookOpen } from 'lucide-react';
-import { listProjects, deleteProject, saveProject, ProjectData } from '@/lib/storage';
+import { Plus, Trash2, FolderOpen, Building2 } from 'lucide-react';
+import { getProjects, deleteProject, saveProject, ProjectData } from '@/lib/storage';
 import { SAMPLE_OBJECTS } from '@/lib/sampleProjects';
 import styles from './DashboardPage.module.css';
 
@@ -11,93 +11,92 @@ export default function DashboardPage() {
   const [projects, setProjects] = useState<ProjectData[]>([]);
 
   useEffect(() => {
-    setProjects(listProjects());
+    setProjects(getProjects());
   }, []);
 
   function handleNew() {
     const id = uuidv4();
-    const project: ProjectData = {
+    const now = new Date().toISOString();
+    saveProject({
       id,
       name: 'Untitled Project',
       description: '',
       objects: [],
-      createdAt: new Date().toISOString(),
-      updatedAt: new Date().toISOString(),
-    };
-    saveProject(project);
+      createdAt: now,
+      updatedAt: now,
+    });
     navigate(`/editor/${id}`);
   }
 
   function handleSample() {
     const id = uuidv4();
-    const project: ProjectData = {
+    const now = new Date().toISOString();
+    saveProject({
       id,
-      name: 'Sample Building',
+      name: 'Sample Project',
       description: 'A sample project with basic elements',
       objects: SAMPLE_OBJECTS,
-      createdAt: new Date().toISOString(),
-      updatedAt: new Date().toISOString(),
-    };
-    saveProject(project);
-    setProjects(listProjects());
+      createdAt: now,
+      updatedAt: now,
+    });
+    setProjects(getProjects());
     navigate(`/editor/${id}`);
   }
 
   function handleDelete(id: string) {
     deleteProject(id);
-    setProjects(listProjects());
+    setProjects(getProjects());
   }
 
   return (
     <div className={styles.page}>
-      <div className={styles.container}>
-        <div className={styles.header}>
-          <h1 className={styles.title}>🏗️ EduArch3D</h1>
-          <p className={styles.subtitle}>Your architectural design projects</p>
+      <header className={styles.header}>
+        <div className={styles.brand}>
+          <Building2 size={24} />
+          <span className={styles.brandName}>EduArch3D</span>
         </div>
+      </header>
 
+      <main className={styles.main}>
         <div className={styles.actions}>
           <button className={styles.newBtn} onClick={handleNew}>
             <Plus size={18} /> New Project
           </button>
           <button className={styles.sampleBtn} onClick={handleSample}>
-            <BookOpen size={18} /> Sample Project
+            <FolderOpen size={18} /> Sample Project
           </button>
         </div>
 
-        <div className={styles.grid}>
-          {projects.length === 0 && (
-            <div className={styles.empty}>
-              <p>No projects yet. Create one to get started!</p>
-            </div>
-          )}
-          {projects.map((p) => (
-            <div key={p.id} className={styles.card}>
-              <div className={styles.cardBody}>
-                <h3 className={styles.cardTitle}>{p.name}</h3>
-                <p className={styles.cardMeta}>
-                  {p.objects.length} objects •{' '}
-                  {new Date(p.updatedAt).toLocaleDateString()}
-                </p>
-              </div>
-              <div className={styles.cardActions}>
-                <button
-                  className={styles.openBtn}
+        {projects.length === 0 ? (
+          <div className={styles.empty}>
+            <p>No projects yet. Create a new one or load a sample!</p>
+          </div>
+        ) : (
+          <div className={styles.grid}>
+            {projects.map((p) => (
+              <div key={p.id} className={styles.card}>
+                <div
+                  className={styles.cardBody}
                   onClick={() => navigate(`/editor/${p.id}`)}
                 >
-                  <FolderOpen size={14} /> Open
-                </button>
+                  <h3 className={styles.cardTitle}>{p.name}</h3>
+                  <p className={styles.cardMeta}>
+                    {p.objects.length} objects •{' '}
+                    {new Date(p.updatedAt).toLocaleDateString()}
+                  </p>
+                </div>
                 <button
                   className={styles.deleteBtn}
                   onClick={() => handleDelete(p.id)}
+                  title="Delete project"
                 >
-                  <Trash2 size={14} />
+                  <Trash2 size={16} />
                 </button>
               </div>
-            </div>
-          ))}
-        </div>
-      </div>
+            ))}
+          </div>
+        )}
+      </main>
     </div>
   );
 }

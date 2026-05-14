@@ -1,6 +1,6 @@
-export type Vector3Tuple = [number, number, number];
+export type AssetCategory = 'structural' | 'openings' | 'furniture' | 'exterior' | 'decorative';
 
-export type AssetCategory = 'structural' | 'openings' | 'furniture' | 'decoration' | 'outdoor';
+export type Vector3Tuple = [number, number, number];
 
 export type TransformMode = 'translate' | 'rotate' | 'scale';
 

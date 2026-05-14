@@ -1,4 +1,5 @@
 import { useNavigate } from 'react-router-dom';
+import { Building2, ArrowRight } from 'lucide-react';
 import styles from './LandingPage.module.css';
 
 export default function LandingPage() {
@@ -7,39 +8,17 @@ export default function LandingPage() {
   return (
     <div className={styles.page}>
       <div className={styles.hero}>
-        <h1 className={styles.title}>
-          🏗️ EduArch3D
-        </h1>
+        <div className={styles.iconWrap}>
+          <Building2 size={48} />
+        </div>
+        <h1 className={styles.title}>EduArch3D</h1>
         <p className={styles.subtitle}>
-          An interactive 3D architectural design tool for education.
-          Build rooms, houses, and entire buildings using predefined elements.
+          A web-based 3D architectural design tool for students and educators.
+          Build rooms, houses, and buildings with predefined architectural elements.
         </p>
-        <div className={styles.actions}>
-          <button
-            className={styles.primaryBtn}
-            onClick={() => navigate('/dashboard')}
-          >
-            Get Started
-          </button>
-        </div>
-        <div className={styles.features}>
-          <div className={styles.feature}>
-            <span className={styles.featureIcon}>🧱</span>
-            <span>Structural Elements</span>
-          </div>
-          <div className={styles.feature}>
-            <span className={styles.featureIcon}>🎨</span>
-            <span>Material Library</span>
-          </div>
-          <div className={styles.feature}>
-            <span className={styles.featureIcon}>📐</span>
-            <span>Precise Controls</span>
-          </div>
-          <div className={styles.feature}>
-            <span className={styles.featureIcon}>💾</span>
-            <span>Auto-Save</span>
-          </div>
-        </div>
+        <button className={styles.cta} onClick={() => navigate('/dashboard')}>
+          Get Started <ArrowRight size={18} />
+        </button>
       </div>
     </div>
   );
