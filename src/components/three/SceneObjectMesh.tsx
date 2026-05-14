@@ -2,6 +2,17 @@ import { useRef, useMemo } from 'react';
 import * as THREE from 'three';
 import { SceneObject } from '@/types';
 import { getAssetById, getMaterialById } from '@/lib/assets';
+import { extend } from '@react-three/fiber';
+
+extend({ LineSegments_: THREE.LineSegments, EdgesGeometry_: THREE.EdgesGeometry, LineBasicMaterial_: THREE.LineBasicMaterial });
+
+declare module '@react-three/fiber' {
+  interface ThreeElements {
+    lineSegments_: JSX.IntrinsicElements['lineSegments'] extends never ? any : any;
+    edgesGeometry_: any;
+    lineBasicMaterial_: any;
+  }
+}
 
 type SceneObjectMeshProps = {
   obj: SceneObject;
@@ -32,6 +43,10 @@ export default function SceneObjectMesh({ obj, isSelected, onSelect }: SceneObje
     }
   }, [asset]);
 
+  const edgesGeo = useMemo(() => {
+    return new THREE.EdgesGeometry(geometry);
+  }, [geometry]);
+
   const matColor = material ? material.color : (asset ? asset.defaultColor : '#cccccc');
   const roughness = material ? material.roughness : 0.5;
   const metalness = material ? material.metalness : 0.0;
@@ -39,34 +54,36 @@ export default function SceneObjectMesh({ obj, isSelected, onSelect }: SceneObje
   if (!obj.visible) return null;
 
   return (
-    <mesh
-      ref={meshRef}
-      name={obj.id}
+    <group
       position={obj.position}
       rotation={obj.rotation}
       scale={obj.scale}
-      geometry={geometry}
-      castShadow
-      receiveShadow
-      onClick={(e) => {
-        e.stopPropagation();
-        onSelect();
-      }}
     >
-      <meshStandardMaterial
-        color={matColor}
-        roughness={roughness}
-        metalness={metalness}
-        transparent={asset?.geometry === 'plane'}
-        opacity={asset?.geometry === 'plane' ? 0.9 : 1}
-        side={asset?.geometry === 'plane' ? THREE.DoubleSide : THREE.FrontSide}
-      />
+      <mesh
+        ref={meshRef}
+        name={obj.id}
+        geometry={geometry}
+        castShadow
+        receiveShadow
+        onClick={(e: any) => {
+          e.stopPropagation();
+          onSelect();
+        }}
+      >
+        <meshStandardMaterial
+          color={matColor}
+          roughness={roughness}
+          metalness={metalness}
+          transparent={asset?.geometry === 'plane'}
+          opacity={asset?.geometry === 'plane' ? 0.9 : 1}
+          side={asset?.geometry === 'plane' ? THREE.DoubleSide : THREE.FrontSide}
+        />
+      </mesh>
       {isSelected && (
-        <lineSegments>
-          <edgesGeometry args={[geometry]} />
+        <lineSegments geometry={edgesGeo} renderOrder={999}>
           <lineBasicMaterial color="#2563eb" linewidth={2} />
         </lineSegments>
       )}
-    </mesh>
+    </group>
   );
 }

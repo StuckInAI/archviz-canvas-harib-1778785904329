@@ -1,9 +1,7 @@
-import { useRef, useCallback } from 'react';
+import { useCallback } from 'react';
 import { OrbitControls, Grid, ContactShadows, Environment } from '@react-three/drei';
-import { useThree } from '@react-three/fiber';
 import { useEditorStore } from '@/hooks/useEditorStore';
 import SceneObjectMesh from '@/components/three/SceneObjectMesh';
-import TransformWrapper from '@/components/three/TransformWrapper';
 import * as THREE from 'three';
 
 export default function SceneContent() {
@@ -89,9 +87,6 @@ export default function SceneContent() {
           onSelect={() => selectObject(obj.id)}
         />
       ))}
-
-      {/* Transform controls for selected object */}
-      {selectedObjectId && <TransformWrapper />}
 
       {/* Orbit Controls */}
       <OrbitControls

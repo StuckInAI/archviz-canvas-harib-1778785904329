@@ -1,68 +1,61 @@
 import { useEffect, useState } from 'react';
 import { useParams, useNavigate } from 'react-router-dom';
-import { v4 as uuidv4 } from 'uuid';
 import { useEditorStore } from '@/hooks/useEditorStore';
-import { useKeyboardShortcuts } from '@/hooks/useKeyboardShortcuts';
 import { useAutoSave } from '@/hooks/useAutoSave';
-import { loadProject, saveProject as saveProjectStorage } from '@/lib/storage';
-import { hasTutorialBeenSeen, markTutorialSeen } from '@/lib/storage';
-import TopToolbar from '@/components/editor/TopToolbar';
+import { useKeyboardShortcuts } from '@/hooks/useKeyboardShortcuts';
+import { getProject, saveProject } from '@/lib/storage';
 import AssetSidebar from '@/components/editor/AssetSidebar';
-import PropertiesPanel from '@/components/editor/PropertiesPanel';
+import TopToolbar from '@/components/editor/TopToolbar';
 import BottomBar from '@/components/editor/BottomBar';
-import TutorialOverlay from '@/components/editor/TutorialOverlay';
+import PropertiesPanel from '@/components/editor/PropertiesPanel';
 import SceneCanvas from '@/components/three/SceneCanvas';
-import styles from './EditorPage.module.css';
+import TutorialOverlay from '@/components/editor/TutorialOverlay';
 
 export default function EditorPage() {
   const { projectId } = useParams<{ projectId: string }>();
   const navigate = useNavigate();
+  const [showTutorial, setShowTutorial] = useState(false);
+
   const {
     setProjectId,
     setProjectName,
     setObjects,
-    objects,
     projectName,
-    sidebarOpen,
-    propertiesPanelOpen,
+    objects,
     selectedObjectId,
-    isDirty,
     markClean,
   } = useEditorStore();
 
-  const [showTutorial, setShowTutorial] = useState(false);
-
-  useKeyboardShortcuts();
   useAutoSave();
+  useKeyboardShortcuts();
 
   useEffect(() => {
     if (!projectId) {
       navigate('/dashboard');
       return;
     }
-    const project = loadProject(projectId);
-    if (project) {
-      setProjectId(project.id);
-      setProjectName(project.name);
-      setObjects(project.objects);
-    } else {
-      setProjectId(projectId);
-      setProjectName('Untitled Project');
-      setObjects([]);
+    const project = getProject(projectId);
+    if (!project) {
+      navigate('/dashboard');
+      return;
     }
+    setProjectId(project.id);
+    setProjectName(project.name);
+    setObjects(project.objects);
 
-    if (!hasTutorialBeenSeen()) {
+    const hasSeenTutorial = localStorage.getItem('eduarch3d_tutorial_seen');
+    if (!hasSeenTutorial) {
       setShowTutorial(true);
     }
   }, [projectId, navigate, setProjectId, setProjectName, setObjects]);
 
   function handleSave() {
     if (!projectId) return;
-    saveProjectStorage({
+    saveProject({
       id: projectId,
       name: projectName,
       description: '',
-      objects: objects,
+      objects,
       createdAt: new Date().toISOString(),
       updatedAt: new Date().toISOString(),
     });
@@ -70,19 +63,19 @@ export default function EditorPage() {
   }
 
   function handleDismissTutorial() {
-    markTutorialSeen();
     setShowTutorial(false);
+    localStorage.setItem('eduarch3d_tutorial_seen', 'true');
   }
 
   return (
-    <div className={styles.wrapper}>
+    <div style={{ display: 'flex', flexDirection: 'column', height: '100vh', overflow: 'hidden' }}>
       <TopToolbar onSave={handleSave} onBack={() => navigate('/dashboard')} />
-      <div className={styles.middle}>
-        {sidebarOpen && <AssetSidebar />}
-        <div className={styles.canvasArea}>
+      <div style={{ display: 'flex', flex: 1, overflow: 'hidden' }}>
+        <AssetSidebar />
+        <div style={{ flex: 1, position: 'relative' }}>
           <SceneCanvas />
         </div>
-        {propertiesPanelOpen && selectedObjectId && <PropertiesPanel />}
+        {selectedObjectId && <PropertiesPanel />}
       </div>
       <BottomBar />
       {showTutorial && <TutorialOverlay onDismiss={handleDismissTutorial} />}
