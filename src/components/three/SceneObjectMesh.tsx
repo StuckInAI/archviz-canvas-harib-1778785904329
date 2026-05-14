@@ -54,7 +54,7 @@ export default function SceneObjectMesh({ obj, isSelected, onSelect }: SceneObje
         geometry={geometry}
         castShadow
         receiveShadow
-        onClick={(e: any) => {
+        onClick={(e) => {
           e.stopPropagation();
           onSelect();
         }}

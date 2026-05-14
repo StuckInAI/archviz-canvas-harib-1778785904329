@@ -11,33 +11,33 @@ export default function LandingPage() {
           🏗️ EduArch3D
         </h1>
         <p className={styles.subtitle}>
-          A browser-based 3D architectural design tool for students and educators.
-          Build rooms, houses, and buildings using predefined architectural elements.
+          An interactive 3D architectural design tool for education.
+          Build rooms, houses, and entire buildings using predefined elements.
         </p>
         <div className={styles.actions}>
           <button
             className={styles.primaryBtn}
             onClick={() => navigate('/dashboard')}
           >
-            Open Dashboard
+            Get Started
           </button>
         </div>
         <div className={styles.features}>
           <div className={styles.feature}>
             <span className={styles.featureIcon}>🧱</span>
-            <span>Walls, Floors, Columns</span>
+            <span>Structural Elements</span>
           </div>
           <div className={styles.feature}>
-            <span className={styles.featureIcon}>🪟</span>
-            <span>Doors & Windows</span>
+            <span className={styles.featureIcon}>🎨</span>
+            <span>Material Library</span>
           </div>
           <div className={styles.feature}>
-            <span className={styles.featureIcon}>🪑</span>
-            <span>Furniture & Décor</span>
+            <span className={styles.featureIcon}>📐</span>
+            <span>Precise Controls</span>
           </div>
           <div className={styles.feature}>
             <span className={styles.featureIcon}>💾</span>
-            <span>Auto-save Projects</span>
+            <span>Auto-Save</span>
           </div>
         </div>
       </div>

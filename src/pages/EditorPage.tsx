@@ -4,12 +4,12 @@ import { useEditorStore } from '@/hooks/useEditorStore';
 import { useAutoSave } from '@/hooks/useAutoSave';
 import { useKeyboardShortcuts } from '@/hooks/useKeyboardShortcuts';
 import { getProject, saveProject } from '@/lib/storage';
-import TopToolbar from '@/components/editor/TopToolbar';
 import AssetSidebar from '@/components/editor/AssetSidebar';
-import PropertiesPanel from '@/components/editor/PropertiesPanel';
+import TopToolbar from '@/components/editor/TopToolbar';
 import BottomBar from '@/components/editor/BottomBar';
-import SceneCanvas from '@/components/three/SceneCanvas';
+import PropertiesPanel from '@/components/editor/PropertiesPanel';
 import TutorialOverlay from '@/components/editor/TutorialOverlay';
+import SceneCanvas from '@/components/three/SceneCanvas';
 import styles from './EditorPage.module.css';
 
 export default function EditorPage() {
@@ -23,10 +23,8 @@ export default function EditorPage() {
     setObjects,
     projectName,
     objects,
-    selectedObjectId,
-    sidebarOpen,
-    propertiesPanelOpen,
     markClean,
+    selectedObjectId,
   } = useEditorStore();
 
   useAutoSave();
@@ -44,9 +42,8 @@ export default function EditorPage() {
     }
     setProjectId(projectId);
     setProjectName(project.name);
-    setObjects(project.objects || []);
+    setObjects(project.objects);
 
-    // Show tutorial on first visit
     const tutorialSeen = localStorage.getItem('eduarch3d_tutorial_seen');
     if (!tutorialSeen) {
       setShowTutorial(true);
@@ -59,7 +56,7 @@ export default function EditorPage() {
       id: projectId,
       name: projectName,
       description: '',
-      objects,
+      objects: objects,
       createdAt: new Date().toISOString(),
       updatedAt: new Date().toISOString(),
     });
@@ -74,12 +71,12 @@ export default function EditorPage() {
   return (
     <div className={styles.editor}>
       <TopToolbar onSave={handleSave} onBack={() => navigate('/dashboard')} />
-      <div className={styles.middle}>
-        {sidebarOpen && <AssetSidebar />}
-        <div className={styles.canvas}>
+      <div className={styles.main}>
+        <AssetSidebar />
+        <div className={styles.viewport}>
           <SceneCanvas />
         </div>
-        {propertiesPanelOpen && selectedObjectId && <PropertiesPanel />}
+        {selectedObjectId && <PropertiesPanel />}
       </div>
       <BottomBar />
       {showTutorial && <TutorialOverlay onDismiss={handleDismissTutorial} />}
