@@ -1,13 +1,12 @@
-.page {
+.editorLayout {
   display: flex;
   flex-direction: column;
   width: 100%;
-  height: 100vh;
-  background: #1a1a2e;
-  overflow: hidden;
+  height: 100%;
+  background: var(--color-bg-dark);
 }
 
-.middle {
+.mainArea {
   display: flex;
   flex: 1;
   overflow: hidden;

@@ -7,10 +7,12 @@ export default function LandingPage() {
   return (
     <div className={styles.page}>
       <div className={styles.hero}>
-        <h1 className={styles.title}>EduArch3D</h1>
+        <h1 className={styles.title}>
+          <span className={styles.emoji}>🏗️</span> EduArch3D
+        </h1>
         <p className={styles.subtitle}>
-          A 3D architectural design tool for education. Build rooms, houses, and
-          buildings using predefined architectural elements.
+          An educational 3D architectural design tool. Build rooms, houses, and
+          buildings using predefined elements — right in your browser.
         </p>
         <div className={styles.actions}>
           <button
@@ -20,19 +22,23 @@ export default function LandingPage() {
             Open Dashboard
           </button>
         </div>
-      </div>
-      <div className={styles.features}>
-        <div className={styles.feature}>
-          <h3>🏗️ Build</h3>
-          <p>Place walls, floors, columns, doors, windows, and furniture.</p>
-        </div>
-        <div className={styles.feature}>
-          <h3>🎨 Customize</h3>
-          <p>Apply materials like brick, wood, marble, glass, and steel.</p>
-        </div>
-        <div className={styles.feature}>
-          <h3>💾 Save</h3>
-          <p>Auto-save projects locally. Manage multiple designs from the dashboard.</p>
+        <div className={styles.features}>
+          <div className={styles.feature}>
+            <span className={styles.featureIcon}>🧱</span>
+            <span>Drag & place walls, floors, roofs</span>
+          </div>
+          <div className={styles.feature}>
+            <span className={styles.featureIcon}>🎨</span>
+            <span>Apply materials & textures</span>
+          </div>
+          <div className={styles.feature}>
+            <span className={styles.featureIcon}>📐</span>
+            <span>Move, rotate, scale with precision</span>
+          </div>
+          <div className={styles.feature}>
+            <span className={styles.featureIcon}>💾</span>
+            <span>Auto-save to local storage</span>
+          </div>
         </div>
       </div>
     </div>
