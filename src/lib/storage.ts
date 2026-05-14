@@ -1,53 +1,63 @@
-import { Project } from '@/types';
+import { SceneObject } from '@/types';
 
-const PROJECTS_KEY = 'eduarch3d_projects';
-const TUTORIAL_KEY = 'eduarch3d_tutorial_seen';
-
-export function loadProjects(): Project[] {
-  try {
-    const raw = localStorage.getItem(PROJECTS_KEY);
-    if (raw) {
-      return JSON.parse(raw) as Project[];
-    }
-  } catch (e) {
-    console.error('Failed to load projects', e);
-  }
-  return [];
+export interface ProjectData {
+  id: string;
+  name: string;
+  description: string;
+  objects: SceneObject[];
+  createdAt: string;
+  updatedAt: string;
 }
 
-export function saveProjects(projects: Project[]): void {
+const STORAGE_KEY = 'eduarch3d_projects';
+
+function getProjects(): ProjectData[] {
   try {
-    localStorage.setItem(PROJECTS_KEY, JSON.stringify(projects));
-  } catch (e) {
-    console.error('Failed to save projects', e);
+    const raw = localStorage.getItem(STORAGE_KEY);
+    if (!raw) return [];
+    return JSON.parse(raw);
+  } catch {
+    return [];
   }
 }
 
-export function loadProject(id: string): Project | undefined {
-  const all = loadProjects();
-  return all.find((p) => p.id === id);
+function setProjects(projects: ProjectData[]) {
+  localStorage.setItem(STORAGE_KEY, JSON.stringify(projects));
 }
 
-export function saveProject(project: Project): void {
-  const all = loadProjects();
-  const idx = all.findIndex((p) => p.id === project.id);
-  if (idx >= 0) {
-    all[idx] = project;
+export function getAllProjects(): ProjectData[] {
+  return getProjects();
+}
+
+export function getProject(id: string): ProjectData | undefined {
+  return getProjects().find((p) => p.id === id);
+}
+
+export function saveProject(project: ProjectData) {
+  const projects = getProjects();
+  const index = projects.findIndex((p) => p.id === project.id);
+  if (index >= 0) {
+    projects[index] = { ...project, updatedAt: new Date().toISOString() };
   } else {
-    all.push(project);
+    projects.push(project);
   }
-  saveProjects(all);
+  setProjects(projects);
 }
 
-export function deleteProject(id: string): void {
-  const all = loadProjects();
-  saveProjects(all.filter((p) => p.id !== id));
+export function deleteProject(id: string) {
+  const projects = getProjects().filter((p) => p.id !== id);
+  setProjects(projects);
 }
 
-export function hasTutorialBeenSeen(): boolean {
-  return localStorage.getItem(TUTORIAL_KEY) === 'true';
-}
-
-export function markTutorialSeen(): void {
-  localStorage.setItem(TUTORIAL_KEY, 'true');
+export function createProject(name: string, description: string, objects: SceneObject[] = []): ProjectData {
+  const project: ProjectData = {
+    id: crypto.randomUUID?.() || Math.random().toString(36).slice(2),
+    name,
+    description,
+    objects,
+    createdAt: new Date().toISOString(),
+    updatedAt: new Date().toISOString(),
+  };
+  saveProject(project);
+  return project;
 }

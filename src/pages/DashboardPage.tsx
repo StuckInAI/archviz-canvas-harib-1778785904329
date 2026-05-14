@@ -1,167 +1,133 @@
 import { useState, useEffect } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { v4 as uuidv4 } from 'uuid';
-import { Plus, Trash2, Building2, FolderOpen, Clock } from 'lucide-react';
-import { listProjects, deleteProject, saveProject } from '@/lib/storage';
+import {
+  Building2, Plus, Trash2, FolderOpen, Clock,
+  ArrowLeft, Download,
+} from 'lucide-react';
+import { getAllProjects, deleteProject, createProject, ProjectData } from '@/lib/storage';
 import { SAMPLE_PROJECTS } from '@/lib/sampleProjects';
-import { Project } from '@/types';
+import styles from './DashboardPage.module.css';
 
 export default function DashboardPage() {
   const navigate = useNavigate();
-  const [projects, setProjects] = useState<Project[]>([]);
+  const [projects, setProjects] = useState<ProjectData[]>([]);
 
   useEffect(() => {
-    setProjects(listProjects());
+    setProjects(getAllProjects());
   }, []);
 
   function handleNewProject() {
-    const id = uuidv4();
-    const project: Project = {
-      id,
-      name: 'Untitled Project',
-      description: '',
-      objects: [],
-      createdAt: new Date().toISOString(),
-      updatedAt: new Date().toISOString(),
-    };
-    saveProject(project);
-    navigate(`/editor/${id}`);
+    const project = createProject('Untitled Project', '');
+    navigate(`/editor/${project.id}`);
   }
 
-  function handleDeleteProject(id: string) {
+  function handleDelete(id: string) {
+    if (!confirm('Delete this project?')) return;
     deleteProject(id);
-    setProjects(listProjects());
+    setProjects(getAllProjects());
   }
 
-  function handleLoadSample(sample: typeof SAMPLE_PROJECTS[number]) {
-    const id = uuidv4();
-    const project: Project = {
-      id,
-      name: sample.name,
-      description: sample.description,
-      objects: JSON.parse(JSON.stringify(sample.objects)),
-      createdAt: new Date().toISOString(),
-      updatedAt: new Date().toISOString(),
-    };
-    saveProject(project);
-    navigate(`/editor/${id}`);
+  function handleLoadSample(index: number) {
+    const sample = SAMPLE_PROJECTS[index];
+    if (!sample) return;
+    const project = createProject(sample.name, sample.description, sample.objects);
+    navigate(`/editor/${project.id}`);
+  }
+
+  function formatDate(iso: string) {
+    try {
+      return new Date(iso).toLocaleDateString(undefined, {
+        month: 'short',
+        day: 'numeric',
+        year: 'numeric',
+        hour: '2-digit',
+        minute: '2-digit',
+      });
+    } catch {
+      return iso;
+    }
   }
 
   return (
-    <div style={{
-      minHeight: '100vh',
-      background: '#0f172a',
-      color: 'white',
-      padding: '2rem',
-    }}>
-      <div style={{ maxWidth: '1200px', margin: '0 auto' }}>
-        <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', marginBottom: '2rem' }}>
-          <div style={{ display: 'flex', alignItems: 'center', gap: '0.75rem' }}>
-            <Building2 size={32} color="#3b82f6" />
-            <h1 style={{ fontSize: '1.5rem', fontWeight: 700 }}>EduArch3D Dashboard</h1>
-          </div>
-          <button
-            onClick={handleNewProject}
-            style={{
-              display: 'flex',
-              alignItems: 'center',
-              gap: '0.5rem',
-              padding: '0.5rem 1rem',
-              background: '#3b82f6',
-              color: 'white',
-              borderRadius: '0.5rem',
-              fontWeight: 600,
-              border: 'none',
-              cursor: 'pointer',
-            }}
-          >
-            <Plus size={18} /> New Project
+    <div className={styles.page}>
+      <header className={styles.header}>
+        <div className={styles.headerLeft}>
+          <button className={styles.backBtn} onClick={() => navigate('/')}>
+            <ArrowLeft size={18} />
           </button>
+          <Building2 size={24} />
+          <h1 className={styles.title}>My Projects</h1>
         </div>
+        <button className={styles.newBtn} onClick={handleNewProject}>
+          <Plus size={16} /> New Project
+        </button>
+      </header>
 
-        {/* My Projects */}
-        <section style={{ marginBottom: '3rem' }}>
-          <h2 style={{ fontSize: '1.1rem', fontWeight: 600, marginBottom: '1rem', display: 'flex', alignItems: 'center', gap: '0.5rem' }}>
-            <FolderOpen size={18} /> My Projects
-          </h2>
-          {projects.length === 0 ? (
-            <p style={{ color: '#94a3b8' }}>No projects yet. Create one or try a sample!</p>
-          ) : (
-            <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fill, minmax(280px, 1fr))', gap: '1rem' }}>
+      <main className={styles.main}>
+        {projects.length === 0 && (
+          <div className={styles.empty}>
+            <FolderOpen size={48} className={styles.emptyIcon} />
+            <h2>No projects yet</h2>
+            <p>Create a new project or load a sample to get started.</p>
+          </div>
+        )}
+
+        {projects.length > 0 && (
+          <section className={styles.section}>
+            <h2 className={styles.sectionTitle}>Your Projects</h2>
+            <div className={styles.grid}>
               {projects.map((p) => (
-                <div
-                  key={p.id}
-                  style={{
-                    background: 'rgba(255,255,255,0.05)',
-                    borderRadius: '0.75rem',
-                    padding: '1.25rem',
-                    cursor: 'pointer',
-                    border: '1px solid rgba(255,255,255,0.1)',
-                    transition: 'border-color 0.2s',
-                  }}
-                  onClick={() => navigate(`/editor/${p.id}`)}
-                  onMouseEnter={(e) => (e.currentTarget.style.borderColor = '#3b82f6')}
-                  onMouseLeave={(e) => (e.currentTarget.style.borderColor = 'rgba(255,255,255,0.1)')}
-                >
-                  <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'start' }}>
-                    <h3 style={{ fontWeight: 600 }}>{p.name}</h3>
-                    <button
-                      onClick={(e) => {
-                        e.stopPropagation();
-                        handleDeleteProject(p.id);
-                      }}
-                      style={{
-                        background: 'none',
-                        border: 'none',
-                        color: '#ef4444',
-                        cursor: 'pointer',
-                        padding: '4px',
-                      }}
-                    >
-                      <Trash2 size={16} />
-                    </button>
+                <div key={p.id} className={styles.card}>
+                  <div
+                    className={styles.cardBody}
+                    onClick={() => navigate(`/editor/${p.id}`)}
+                  >
+                    <h3 className={styles.cardTitle}>{p.name}</h3>
+                    <p className={styles.cardInfo}>
+                      {p.objects.length} objects
+                    </p>
+                    <div className={styles.cardMeta}>
+                      <Clock size={12} />
+                      <span>{formatDate(p.updatedAt)}</span>
+                    </div>
                   </div>
-                  <div style={{ display: 'flex', alignItems: 'center', gap: '0.5rem', marginTop: '0.5rem', color: '#94a3b8', fontSize: '0.8rem' }}>
-                    <Clock size={12} />
-                    <span>{new Date(p.updatedAt).toLocaleDateString()}</span>
-                    <span>•</span>
-                    <span>{p.objects.length} objects</span>
+                  <div className={styles.cardActions}>
+                    <button
+                      className={styles.deleteBtn}
+                      onClick={() => handleDelete(p.id)}
+                      title="Delete project"
+                    >
+                      <Trash2 size={14} />
+                    </button>
                   </div>
                 </div>
               ))}
             </div>
-          )}
-        </section>
+          </section>
+        )}
 
-        {/* Sample Projects */}
-        <section>
-          <h2 style={{ fontSize: '1.1rem', fontWeight: 600, marginBottom: '1rem' }}>Sample Projects</h2>
-          <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fill, minmax(280px, 1fr))', gap: '1rem' }}>
-            {SAMPLE_PROJECTS.map((s) => (
-              <div
-                key={s.name}
-                style={{
-                  background: 'rgba(59,130,246,0.1)',
-                  borderRadius: '0.75rem',
-                  padding: '1.25rem',
-                  cursor: 'pointer',
-                  border: '1px solid rgba(59,130,246,0.2)',
-                  transition: 'border-color 0.2s',
-                }}
-                onClick={() => handleLoadSample(s)}
-                onMouseEnter={(e) => (e.currentTarget.style.borderColor = '#3b82f6')}
-                onMouseLeave={(e) => (e.currentTarget.style.borderColor = 'rgba(59,130,246,0.2)')}
-              >
-                <h3 style={{ fontWeight: 600 }}>{s.name}</h3>
-                <p style={{ color: '#94a3b8', fontSize: '0.85rem', marginTop: '0.25rem' }}>{s.description}</p>
-                <span style={{ display: 'inline-block', marginTop: '0.5rem', color: '#60a5fa', fontSize: '0.8rem' }}>
-                  {s.objects.length} objects
-                </span>
+        <section className={styles.section}>
+          <h2 className={styles.sectionTitle}>Sample Projects</h2>
+          <div className={styles.grid}>
+            {SAMPLE_PROJECTS.map((sample, i) => (
+              <div key={i} className={styles.card}>
+                <div
+                  className={styles.cardBody}
+                  onClick={() => handleLoadSample(i)}
+                >
+                  <h3 className={styles.cardTitle}>{sample.name}</h3>
+                  <p className={styles.cardInfo}>{sample.description}</p>
+                  <div className={styles.cardMeta}>
+                    <Download size={12} />
+                    <span>{sample.objects.length} objects</span>
+                  </div>
+                </div>
               </div>
             ))}
           </div>
         </section>
-      </div>
+      </main>
     </div>
   );
 }

@@ -2,17 +2,6 @@ import { useRef, useMemo } from 'react';
 import * as THREE from 'three';
 import { SceneObject } from '@/types';
 import { getAssetById, getMaterialById } from '@/lib/assets';
-import { extend } from '@react-three/fiber';
-
-extend({ LineSegments_: THREE.LineSegments, EdgesGeometry_: THREE.EdgesGeometry, LineBasicMaterial_: THREE.LineBasicMaterial });
-
-declare module '@react-three/fiber' {
-  interface ThreeElements {
-    lineSegments_: JSX.IntrinsicElements['lineSegments'] extends never ? any : any;
-    edgesGeometry_: any;
-    lineBasicMaterial_: any;
-  }
-}
 
 type SceneObjectMeshProps = {
   obj: SceneObject;

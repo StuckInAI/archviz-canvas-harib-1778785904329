@@ -9,9 +9,12 @@ export default defineConfig({
       '@': path.resolve(__dirname, './src'),
     },
   },
+  build: {
+    outDir: 'dist',
+    sourcemap: false,
+  },
   server: {
-    host: '0.0.0.0',
+    host: true,
     port: 5173,
-    hmr: false,
   },
 });
