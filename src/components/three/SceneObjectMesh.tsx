@@ -1,8 +1,7 @@
 import { useRef, useMemo } from 'react';
 import * as THREE from 'three';
-import { ThreeEvent } from '@react-three/fiber';
-import { SceneObject } from '@/types';
-import { getAssetById, getMaterialById } from '@/lib/assets';
+import { getAssetById, getMaterialById } from '../../lib/assets';
+import type { SceneObject } from '../../hooks/useEditorStore';
 
 type SceneObjectMeshProps = {
   obj: SceneObject;
@@ -17,17 +16,18 @@ export default function SceneObjectMesh({ obj, isSelected, onSelect }: SceneObje
 
   const geometry = useMemo(() => {
     if (!asset) return new THREE.BoxGeometry(1, 1, 1);
+    const args = asset.geometryArgs;
     switch (asset.geometry) {
       case 'box':
-        return new THREE.BoxGeometry(...(asset.geometryArgs as [number, number, number]));
+        return new THREE.BoxGeometry(args[0] || 1, args[1] || 1, args[2] || 1);
       case 'cylinder':
-        return new THREE.CylinderGeometry(...(asset.geometryArgs as [number, number, number, number]));
+        return new THREE.CylinderGeometry(args[0] || 0.5, args[1] || 0.5, args[2] || 1, args[3] || 16);
       case 'sphere':
-        return new THREE.SphereGeometry(...(asset.geometryArgs as [number, number, number]));
+        return new THREE.SphereGeometry(args[0] || 0.5, args[1] || 32, args[2] || 32);
       case 'cone':
-        return new THREE.ConeGeometry(...(asset.geometryArgs as [number, number, number]));
+        return new THREE.ConeGeometry(args[0] || 0.5, args[1] || 1, args[2] || 16);
       case 'plane':
-        return new THREE.PlaneGeometry(...(asset.geometryArgs as [number, number]));
+        return new THREE.PlaneGeometry(args[0] || 1, args[1] || 1);
       default:
         return new THREE.BoxGeometry(1, 1, 1);
     }
@@ -55,7 +55,7 @@ export default function SceneObjectMesh({ obj, isSelected, onSelect }: SceneObje
         geometry={geometry}
         castShadow
         receiveShadow
-        onClick={(e: ThreeEvent<MouseEvent>) => {
+        onClick={(e: any) => {
           e.stopPropagation();
           onSelect();
         }}
@@ -64,9 +64,6 @@ export default function SceneObjectMesh({ obj, isSelected, onSelect }: SceneObje
           color={matColor}
           roughness={roughness}
           metalness={metalness}
-          transparent={asset?.geometry === 'plane'}
-          opacity={asset?.geometry === 'plane' ? 0.9 : 1}
-          side={asset?.geometry === 'plane' ? THREE.DoubleSide : THREE.FrontSide}
         />
       </mesh>
       {isSelected && (

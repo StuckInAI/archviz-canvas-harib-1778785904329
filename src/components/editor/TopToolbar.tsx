@@ -1,129 +1,110 @@
-import { useEditorStore } from '@/hooks/useEditorStore';
+import { useEditorStore } from '../../hooks/useEditorStore';
 
-interface TopToolbarProps {
+interface Props {
   onSave: () => void;
   onBack: () => void;
 }
 
-export default function TopToolbar({ onSave, onBack }: TopToolbarProps) {
-  const {
-    projectName,
-    setProjectName,
-    transformMode,
-    setTransformMode,
-    viewMode,
-    setViewMode,
-    undo,
-    redo,
-    isDirty,
-  } = useEditorStore();
+export default function TopToolbar({ onSave, onBack }: Props) {
+  const projectName = useEditorStore((s) => s.projectName);
+  const transformMode = useEditorStore((s) => s.transformMode);
+  const viewMode = useEditorStore((s) => s.viewMode);
+  const setTransformMode = useEditorStore((s) => s.setTransformMode);
+  const setViewMode = useEditorStore((s) => s.setViewMode);
+  const undo = useEditorStore((s) => s.undo);
+  const redo = useEditorStore((s) => s.redo);
+  const isDirty = useEditorStore((s) => s.isDirty);
+
+  const btnBase: React.CSSProperties = {
+    padding: '6px 12px',
+    borderRadius: 5,
+    fontSize: '0.8rem',
+    fontWeight: 500,
+    cursor: 'pointer',
+    border: '1px solid #374151',
+    color: '#d1d5db',
+    background: '#1f2937',
+    transition: 'all 0.15s',
+  };
+
+  const btnActive: React.CSSProperties = {
+    ...btnBase,
+    background: '#2563eb',
+    borderColor: '#2563eb',
+    color: 'white',
+  };
 
   return (
     <div style={{
       display: 'flex',
       alignItems: 'center',
-      gap: '0.75rem',
-      padding: '0.5rem 1rem',
-      background: '#2d2d44',
-      borderBottom: '1px solid #3d3d5c',
-      color: 'white',
+      justifyContent: 'space-between',
+      height: 48,
+      background: '#111827',
+      borderBottom: '1px solid #1f2937',
+      padding: '0 12px',
+      gap: 8,
       flexShrink: 0,
-      flexWrap: 'wrap',
-      minHeight: 48,
+      zIndex: 10,
     }}>
-      <button onClick={onBack} style={{
-        padding: '0.3rem 0.6rem',
-        background: '#4a4a6a',
-        color: 'white',
-        borderRadius: 4,
-        fontSize: '0.8rem',
-        cursor: 'pointer',
-        border: 'none',
-      }}>← Back</button>
+      {/* Left section */}
+      <div style={{ display: 'flex', alignItems: 'center', gap: 8 }}>
+        <button onClick={onBack} style={btnBase}>← Back</button>
+        <span style={{ color: '#9ca3af', fontSize: '0.75rem' }}>|</span>
+        <span style={{ color: 'white', fontWeight: 600, fontSize: '0.9rem' }}>
+          {projectName}
+        </span>
+        {isDirty && <span style={{ color: '#f59e0b', fontSize: '0.7rem' }}>● unsaved</span>}
+      </div>
 
-      <input
-        value={projectName}
-        onChange={(e) => setProjectName(e.target.value)}
-        style={{
-          background: 'transparent',
-          border: '1px solid #4a4a6a',
-          color: 'white',
-          padding: '0.3rem 0.5rem',
-          borderRadius: 4,
-          fontSize: '0.9rem',
-          width: 180,
-        }}
-      />
-
-      <div style={{ width: 1, height: 24, background: '#4a4a6a' }} />
-
-      <button onClick={onSave} style={{
-        padding: '0.3rem 0.8rem',
-        background: isDirty ? '#2563eb' : '#4a4a6a',
-        color: 'white',
-        borderRadius: 4,
-        fontSize: '0.8rem',
-        cursor: 'pointer',
-        border: 'none',
-      }}>💾 Save</button>
-
-      <button onClick={undo} style={{
-        padding: '0.3rem 0.5rem',
-        background: '#4a4a6a',
-        color: 'white',
-        borderRadius: 4,
-        fontSize: '0.8rem',
-        cursor: 'pointer',
-        border: 'none',
-      }}>↩ Undo</button>
-
-      <button onClick={redo} style={{
-        padding: '0.3rem 0.5rem',
-        background: '#4a4a6a',
-        color: 'white',
-        borderRadius: 4,
-        fontSize: '0.8rem',
-        cursor: 'pointer',
-        border: 'none',
-      }}>↪ Redo</button>
-
-      <div style={{ width: 1, height: 24, background: '#4a4a6a' }} />
-
-      {(['translate', 'rotate', 'scale'] as const).map((mode) => (
+      {/* Center section - transform controls */}
+      <div style={{ display: 'flex', alignItems: 'center', gap: 4 }}>
         <button
-          key={mode}
-          onClick={() => setTransformMode(mode)}
-          style={{
-            padding: '0.3rem 0.6rem',
-            background: transformMode === mode ? '#2563eb' : '#4a4a6a',
-            color: 'white',
-            borderRadius: 4,
-            fontSize: '0.75rem',
-            cursor: 'pointer',
-            border: 'none',
-            textTransform: 'capitalize',
-          }}
-        >{mode === 'translate' ? '↔ Move' : mode === 'rotate' ? '🔄 Rotate' : '⤡ Scale'}</button>
-      ))}
-
-      <div style={{ flex: 1 }} />
-
-      {(['perspective', 'top', 'front', 'side'] as const).map((v) => (
+          onClick={() => setTransformMode('translate')}
+          style={transformMode === 'translate' ? btnActive : btnBase}
+        >
+          Move (G)
+        </button>
         <button
-          key={v}
-          onClick={() => setViewMode(v)}
+          onClick={() => setTransformMode('rotate')}
+          style={transformMode === 'rotate' ? btnActive : btnBase}
+        >
+          Rotate (R)
+        </button>
+        <button
+          onClick={() => setTransformMode('scale')}
+          style={transformMode === 'scale' ? btnActive : btnBase}
+        >
+          Scale (S)
+        </button>
+        <span style={{ color: '#4b5563', margin: '0 4px' }}>|</span>
+        {(['perspective', 'top', 'front', 'side'] as const).map((v) => (
+          <button
+            key={v}
+            onClick={() => setViewMode(v)}
+            style={viewMode === v ? btnActive : btnBase}
+          >
+            {v.charAt(0).toUpperCase() + v.slice(1)}
+          </button>
+        ))}
+      </div>
+
+      {/* Right section */}
+      <div style={{ display: 'flex', alignItems: 'center', gap: 4 }}>
+        <button onClick={undo} style={btnBase}>↶ Undo</button>
+        <button onClick={redo} style={btnBase}>↷ Redo</button>
+        <button
+          onClick={onSave}
           style={{
-            padding: '0.3rem 0.5rem',
-            background: viewMode === v ? '#2563eb' : '#4a4a6a',
+            ...btnBase,
+            background: '#059669',
+            borderColor: '#059669',
             color: 'white',
-            borderRadius: 4,
-            fontSize: '0.7rem',
-            cursor: 'pointer',
-            border: 'none',
-            textTransform: 'capitalize',
           }}
-        >{v}</button>
-      ))}
+        >
+          💾 Save
+        </button>
+      </div>
     </div>
   );
 }

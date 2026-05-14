@@ -1,52 +1,51 @@
-import { useEditorStore } from '@/hooks/useEditorStore';
+import { useEditorStore } from '../../hooks/useEditorStore';
 
 export default function BottomBar() {
-  const { gridVisible, toggleGrid, snapEnabled, toggleSnap, snapValue, setSnapValue } = useEditorStore();
+  const gridVisible = useEditorStore((s) => s.gridVisible);
+  const snapEnabled = useEditorStore((s) => s.snapEnabled);
+  const toggleGrid = useEditorStore((s) => s.toggleGrid);
+  const toggleSnap = useEditorStore((s) => s.toggleSnap);
+  const toggleSidebar = useEditorStore((s) => s.toggleSidebar);
+  const togglePropertiesPanel = useEditorStore((s) => s.togglePropertiesPanel);
+  const objects = useEditorStore((s) => s.objects);
+
+  const tagStyle = (active: boolean): React.CSSProperties => ({
+    padding: '4px 10px',
+    borderRadius: 4,
+    fontSize: '0.75rem',
+    fontWeight: 500,
+    cursor: 'pointer',
+    border: 'none',
+    color: active ? 'white' : '#6b7280',
+    background: active ? '#374151' : 'transparent',
+    transition: 'all 0.15s',
+  });
 
   return (
     <div style={{
       display: 'flex',
       alignItems: 'center',
-      gap: '1rem',
-      padding: '0.4rem 1rem',
-      background: '#2d2d44',
-      borderTop: '1px solid #3d3d5c',
-      color: '#ccc',
-      fontSize: '0.75rem',
+      justifyContent: 'space-between',
+      height: 32,
+      background: '#111827',
+      borderTop: '1px solid #1f2937',
+      padding: '0 12px',
       flexShrink: 0,
-      minHeight: 36,
     }}>
-      <label style={{ display: 'flex', alignItems: 'center', gap: 4, cursor: 'pointer' }}>
-        <input type="checkbox" checked={gridVisible} onChange={toggleGrid} />
-        Grid
-      </label>
-      <label style={{ display: 'flex', alignItems: 'center', gap: 4, cursor: 'pointer' }}>
-        <input type="checkbox" checked={snapEnabled} onChange={toggleSnap} />
-        Snap
-      </label>
-      {snapEnabled && (
-        <label style={{ display: 'flex', alignItems: 'center', gap: 4 }}>
-          Snap:
-          <select
-            value={snapValue}
-            onChange={(e) => setSnapValue(parseFloat(e.target.value))}
-            style={{
-              background: '#4a4a6a',
-              color: 'white',
-              border: 'none',
-              borderRadius: 3,
-              padding: '0.15rem 0.3rem',
-              fontSize: '0.75rem',
-            }}
-          >
-            <option value={0.25}>0.25</option>
-            <option value={0.5}>0.5</option>
-            <option value={1}>1.0</option>
-          </select>
-        </label>
-      )}
-      <div style={{ flex: 1 }} />
-      <span style={{ color: '#888' }}>G=Move R=Rotate S=Scale Del=Delete Ctrl+D=Duplicate Ctrl+Z=Undo</span>
+      <div style={{ display: 'flex', gap: 4, alignItems: 'center' }}>
+        <button onClick={toggleGrid} style={tagStyle(gridVisible)}>Grid</button>
+        <button onClick={toggleSnap} style={tagStyle(snapEnabled)}>Snap</button>
+        <button onClick={toggleSidebar} style={tagStyle(true)}>Assets</button>
+        <button onClick={togglePropertiesPanel} style={tagStyle(true)}>Props</button>
+      </div>
+      <div style={{ display: 'flex', gap: 12, alignItems: 'center' }}>
+        <span style={{ color: '#6b7280', fontSize: '0.7rem' }}>
+          {objects.length} object{objects.length !== 1 ? 's' : ''}
+        </span>
+        <span style={{ color: '#4b5563', fontSize: '0.65rem' }}>
+          G=Move R=Rotate S=Scale Del=Delete Ctrl+D=Dup Ctrl+Z/Y=Undo/Redo
+        </span>
+      </div>
     </div>
   );
 }

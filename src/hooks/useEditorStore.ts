@@ -1,12 +1,27 @@
 import { create } from 'zustand';
-import { SceneObject, TransformMode, ViewMode } from '@/types';
 import { v4 as uuidv4 } from 'uuid';
+
+export type AssetCategory = 'structural' | 'openings' | 'furniture' | 'decor' | 'landscape';
+export type TransformMode = 'translate' | 'rotate' | 'scale';
+export type ViewMode = 'perspective' | 'top' | 'front' | 'side';
+export type Vector3Tuple = [number, number, number];
+
+export interface SceneObject {
+  id: string;
+  assetId: string;
+  name: string;
+  position: Vector3Tuple;
+  rotation: Vector3Tuple;
+  scale: Vector3Tuple;
+  materialId: string;
+  visible: boolean;
+}
 
 interface HistoryEntry {
   objects: SceneObject[];
 }
 
-interface EditorStore {
+interface EditorState {
   projectId: string;
   projectName: string;
   objects: SceneObject[];
@@ -43,7 +58,7 @@ interface EditorStore {
   markClean: () => void;
 }
 
-export const useEditorStore = create<EditorStore>((set, get) => ({
+export const useEditorStore = create<EditorState>((set, get) => ({
   projectId: '',
   projectName: 'Untitled Project',
   objects: [],
@@ -59,24 +74,24 @@ export const useEditorStore = create<EditorStore>((set, get) => ({
   historyIndex: 0,
   isDirty: false,
 
-  setProjectId: (id: string) => set({ projectId: id }),
-  setProjectName: (name: string) => set({ projectName: name, isDirty: true }),
+  setProjectId: (id) => set({ projectId: id }),
+  setProjectName: (name) => set({ projectName: name, isDirty: true }),
 
-  setObjects: (objects: SceneObject[]) => set({
+  setObjects: (objects) => set({
     objects,
     history: [{ objects: JSON.parse(JSON.stringify(objects)) }],
     historyIndex: 0,
     isDirty: false,
   }),
 
-  addObject: (obj: SceneObject) => {
+  addObject: (obj) => {
     const state = get();
     const newObjects = [...state.objects, obj];
     set({ objects: newObjects, isDirty: true });
     get().pushHistory();
   },
 
-  updateObject: (id: string, updates: Partial<SceneObject>) => {
+  updateObject: (id, updates) => {
     const state = get();
     const newObjects = state.objects.map((o) =>
       o.id === id ? { ...o, ...updates } : o
@@ -84,7 +99,7 @@ export const useEditorStore = create<EditorStore>((set, get) => ({
     set({ objects: newObjects, isDirty: true });
   },
 
-  removeObject: (id: string) => {
+  removeObject: (id) => {
     const state = get();
     const newObjects = state.objects.filter((o) => o.id !== id);
     const newSelected = state.selectedObjectId === id ? null : state.selectedObjectId;
@@ -92,7 +107,7 @@ export const useEditorStore = create<EditorStore>((set, get) => ({
     get().pushHistory();
   },
 
-  duplicateObject: (id: string) => {
+  duplicateObject: (id) => {
     const state = get();
     const obj = state.objects.find((o) => o.id === id);
     if (!obj) return;
@@ -107,20 +122,13 @@ export const useEditorStore = create<EditorStore>((set, get) => ({
     get().pushHistory();
   },
 
-  selectObject: (id: string | null) => set({ selectedObjectId: id }),
-
-  setTransformMode: (mode: TransformMode) => set({ transformMode: mode }),
-
-  setViewMode: (mode: ViewMode) => set({ viewMode: mode }),
-
+  selectObject: (id) => set({ selectedObjectId: id }),
+  setTransformMode: (mode) => set({ transformMode: mode }),
+  setViewMode: (mode) => set({ viewMode: mode }),
   toggleGrid: () => set((s) => ({ gridVisible: !s.gridVisible })),
-
   toggleSnap: () => set((s) => ({ snapEnabled: !s.snapEnabled })),
-
-  setSnapValue: (val: number) => set({ snapValue: val }),
-
+  setSnapValue: (val) => set({ snapValue: val }),
   toggleSidebar: () => set((s) => ({ sidebarOpen: !s.sidebarOpen })),
-
   togglePropertiesPanel: () => set((s) => ({ propertiesPanelOpen: !s.propertiesPanelOpen })),
 
   pushHistory: () => {

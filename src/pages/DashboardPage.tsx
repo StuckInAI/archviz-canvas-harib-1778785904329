@@ -1,9 +1,12 @@
 import { useState, useEffect } from 'react';
-import { useNavigate } from 'react-router-dom';
-import { listProjects, deleteProject, createProject, ProjectData } from '@/lib/storage';
+import { listProjects, deleteProject, createProject } from '../lib/storage';
+import type { ProjectData } from '../lib/storage';
 
-export default function DashboardPage() {
-  const navigate = useNavigate();
+interface Props {
+  navigate: (path: string) => void;
+}
+
+export default function DashboardPage({ navigate }: Props) {
   const [projects, setProjects] = useState<ProjectData[]>([]);
   const [newName, setNewName] = useState('');
 
@@ -20,8 +23,10 @@ export default function DashboardPage() {
   }
 
   function handleDelete(id: string) {
-    deleteProject(id);
-    setProjects(listProjects());
+    if (confirm('Delete this project?')) {
+      deleteProject(id);
+      setProjects(listProjects());
+    }
   }
 
   function handleOpen(id: string) {
@@ -32,26 +37,51 @@ export default function DashboardPage() {
     <div style={{
       minHeight: '100vh',
       background: '#f3f4f6',
-      padding: '2rem',
-      overflowY: 'auto',
+      overflow: 'auto',
     }}>
+      {/* Header */}
       <div style={{
-        maxWidth: 900,
-        margin: '0 auto',
+        background: 'white',
+        borderBottom: '1px solid #e5e7eb',
+        padding: '12px 24px',
+        display: 'flex',
+        alignItems: 'center',
+        justifyContent: 'space-between',
       }}>
+        <div style={{ display: 'flex', alignItems: 'center', gap: 10 }}>
+          <span style={{ fontSize: '1.5rem' }}>🏗️</span>
+          <span style={{ fontWeight: 700, fontSize: '1.1rem', color: '#1f2937' }}>EduArch3D</span>
+        </div>
+        <button
+          onClick={() => navigate('/')}
+          style={{
+            padding: '6px 14px',
+            background: '#f3f4f6',
+            borderRadius: 6,
+            fontSize: '0.85rem',
+            color: '#6b7280',
+            cursor: 'pointer',
+            border: '1px solid #e5e7eb',
+          }}
+        >
+          ← Home
+        </button>
+      </div>
+
+      <div style={{ maxWidth: 900, margin: '0 auto', padding: '2rem' }}>
         <div style={{
           display: 'flex',
           alignItems: 'center',
           justifyContent: 'space-between',
-          marginBottom: '2rem',
+          marginBottom: '1.5rem',
           flexWrap: 'wrap',
           gap: '1rem',
         }}>
-          <h1 style={{ fontSize: '1.8rem', fontWeight: 700, color: '#1f2937' }}>My Projects</h1>
+          <h1 style={{ fontSize: '1.6rem', fontWeight: 700, color: '#1f2937' }}>My Projects</h1>
           <div style={{ display: 'flex', gap: '0.5rem' }}>
             <input
               style={{
-                padding: '0.5rem 0.75rem',
+                padding: '8px 12px',
                 border: '1px solid #d1d5db',
                 borderRadius: 6,
                 fontSize: '0.9rem',
@@ -64,8 +94,9 @@ export default function DashboardPage() {
               onKeyDown={(e) => e.key === 'Enter' && handleCreate()}
             />
             <button
+              onClick={handleCreate}
               style={{
-                padding: '0.5rem 1rem',
+                padding: '8px 16px',
                 background: '#2563eb',
                 color: 'white',
                 borderRadius: 6,
@@ -73,11 +104,8 @@ export default function DashboardPage() {
                 fontWeight: 600,
                 cursor: 'pointer',
                 border: 'none',
-                display: 'flex',
-                alignItems: 'center',
-                gap: 4,
+                whiteSpace: 'nowrap',
               }}
-              onClick={handleCreate}
             >
               + New Project
             </button>
@@ -87,11 +115,11 @@ export default function DashboardPage() {
         {projects.length === 0 && (
           <div style={{
             textAlign: 'center',
-            padding: '3rem',
+            padding: '4rem 2rem',
             color: '#9ca3af',
-            fontSize: '1rem',
           }}>
-            <p>No projects yet. Create your first project above!</p>
+            <div style={{ fontSize: '3rem', marginBottom: '1rem' }}>📐</div>
+            <p style={{ fontSize: '1rem' }}>No projects yet. Create your first project to get started!</p>
           </div>
         )}
 
@@ -109,21 +137,34 @@ export default function DashboardPage() {
               display: 'flex',
               flexDirection: 'column',
               gap: '0.75rem',
+              border: '1px solid #f0f0f0',
             }}>
+              <div style={{
+                width: '100%',
+                height: 100,
+                background: 'linear-gradient(135deg, #e0e7ff, #dbeafe)',
+                borderRadius: 6,
+                display: 'flex',
+                alignItems: 'center',
+                justifyContent: 'center',
+                fontSize: '2rem',
+              }}>
+                🏠
+              </div>
               <div>
-                <h3 style={{ fontSize: '1.05rem', fontWeight: 600, color: '#1f2937', marginBottom: 4 }}>
+                <h3 style={{ fontSize: '1rem', fontWeight: 600, color: '#1f2937', marginBottom: 4 }}>
                   {project.name}
                 </h3>
-                <p style={{ fontSize: '0.8rem', color: '#9ca3af' }}>
-                  {project.objects.length} objects • Updated{' '}
-                  {new Date(project.updatedAt).toLocaleDateString()}
+                <p style={{ fontSize: '0.78rem', color: '#9ca3af' }}>
+                  {project.objects.length} object{project.objects.length !== 1 ? 's' : ''} • {new Date(project.updatedAt).toLocaleDateString()}
                 </p>
               </div>
               <div style={{ display: 'flex', gap: '0.5rem' }}>
                 <button
+                  onClick={() => handleOpen(project.id)}
                   style={{
                     flex: 1,
-                    padding: '0.4rem',
+                    padding: '8px',
                     background: '#2563eb',
                     color: 'white',
                     borderRadius: 6,
@@ -132,13 +173,13 @@ export default function DashboardPage() {
                     cursor: 'pointer',
                     border: 'none',
                   }}
-                  onClick={() => handleOpen(project.id)}
                 >
                   Open
                 </button>
                 <button
+                  onClick={() => handleDelete(project.id)}
                   style={{
-                    padding: '0.4rem 0.6rem',
+                    padding: '8px 12px',
                     background: '#fee2e2',
                     color: '#ef4444',
                     borderRadius: 6,
@@ -146,9 +187,8 @@ export default function DashboardPage() {
                     cursor: 'pointer',
                     border: 'none',
                   }}
-                  onClick={() => handleDelete(project.id)}
                 >
-                  🗑
+                  ✕
                 </button>
               </div>
             </div>

@@ -1,7 +1,7 @@
 import { useCallback } from 'react';
-import { OrbitControls, Grid, ContactShadows, Environment } from '@react-three/drei';
-import { useEditorStore } from '@/hooks/useEditorStore';
-import SceneObjectMesh from '@/components/three/SceneObjectMesh';
+import { OrbitControls, Grid, ContactShadows } from '@react-three/drei';
+import { useEditorStore } from '../../hooks/useEditorStore';
+import SceneObjectMesh from './SceneObjectMesh';
 
 export default function SceneContent() {
   const objects = useEditorStore((s) => s.objects);
@@ -17,10 +17,10 @@ export default function SceneContent() {
   return (
     <>
       {/* Lighting */}
-      <ambientLight intensity={0.4} />
+      <ambientLight intensity={0.5} />
       <directionalLight
         position={[10, 15, 10]}
-        intensity={1.2}
+        intensity={1.0}
         castShadow
         shadow-mapSize-width={2048}
         shadow-mapSize-height={2048}
@@ -31,10 +31,7 @@ export default function SceneContent() {
         shadow-camera-bottom={-20}
       />
       <directionalLight position={[-5, 8, -5]} intensity={0.3} />
-      <hemisphereLight args={['#b1e1ff', '#b97a20', 0.3]} />
-
-      {/* Environment for PBR reflections */}
-      <Environment preset="city" />
+      <hemisphereLight args={['#b1e1ff', '#b97a20', 0.25]} />
 
       {/* Grid */}
       {gridVisible && (
@@ -53,7 +50,7 @@ export default function SceneContent() {
         />
       )}
 
-      {/* Ground plane for shadows and click-to-deselect */}
+      {/* Ground plane for click-to-deselect and shadows */}
       <mesh
         rotation={[-Math.PI / 2, 0, 0]}
         position={[0, -0.02, 0]}

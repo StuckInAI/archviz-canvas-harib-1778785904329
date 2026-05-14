@@ -1,5 +1,15 @@
-import { SceneObject } from '@/types';
 import { v4 as uuidv4 } from 'uuid';
+
+export interface SceneObjectData {
+  id: string;
+  assetId: string;
+  name: string;
+  position: [number, number, number];
+  rotation: [number, number, number];
+  scale: [number, number, number];
+  materialId: string;
+  visible: boolean;
+}
 
 const STORAGE_KEY = 'eduarch3d_projects';
 
@@ -7,7 +17,7 @@ export interface ProjectData {
   id: string;
   name: string;
   description: string;
-  objects: SceneObject[];
+  objects: SceneObjectData[];
   createdAt: string;
   updatedAt: string;
 }

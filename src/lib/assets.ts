@@ -1,4 +1,4 @@
-import { AssetCategory } from '@/types';
+export type AssetCategory = 'structural' | 'openings' | 'furniture' | 'decor' | 'landscape';
 
 export interface AssetDefinition {
   id: string;
@@ -50,8 +50,12 @@ export const ASSET_LIBRARY: AssetDefinition[] = [
   { id: 'window', name: 'Window', category: 'openings', description: 'A window opening with glass', icon: '🪟', geometry: 'box', geometryArgs: [1, 1, 1], defaultScale: [1.2, 1.0, 0.06], defaultColor: '#add8e6' },
   { id: 'table', name: 'Table', category: 'furniture', description: 'A simple table', icon: '🪑', geometry: 'box', geometryArgs: [1, 1, 1], defaultScale: [1.2, 0.75, 0.8], defaultColor: '#8B4513' },
   { id: 'chair', name: 'Chair', category: 'furniture', description: 'A simple chair', icon: '💺', geometry: 'box', geometryArgs: [1, 1, 1], defaultScale: [0.5, 0.9, 0.5], defaultColor: '#8B4513' },
+  { id: 'sofa', name: 'Sofa', category: 'furniture', description: 'A cozy sofa', icon: '🛋️', geometry: 'box', geometryArgs: [1, 1, 1], defaultScale: [2, 0.8, 0.9], defaultColor: '#4a5568' },
+  { id: 'bed', name: 'Bed', category: 'furniture', description: 'A double bed', icon: '🛏️', geometry: 'box', geometryArgs: [1, 1, 1], defaultScale: [2, 0.5, 1.6], defaultColor: '#e2e8f0' },
   { id: 'sphere-decor', name: 'Sphere Decor', category: 'decor', description: 'A decorative sphere', icon: '🔮', geometry: 'sphere', geometryArgs: [0.5, 32, 32], defaultScale: [1, 1, 1], defaultColor: '#e0e0e0' },
-  { id: 'tree', name: 'Tree (Cone)', category: 'landscape', description: 'A simple cone-shaped tree', icon: '🌲', geometry: 'cone', geometryArgs: [0.5, 1, 16], defaultScale: [1.5, 3, 1.5], defaultColor: '#228B22' },
+  { id: 'lamp', name: 'Floor Lamp', category: 'decor', description: 'A floor lamp', icon: '💡', geometry: 'cylinder', geometryArgs: [0.1, 0.1, 1.5, 8], defaultScale: [1, 1, 1], defaultColor: '#ffd700' },
+  { id: 'tree', name: 'Tree', category: 'landscape', description: 'A simple cone-shaped tree', icon: '🌲', geometry: 'cone', geometryArgs: [0.5, 1, 16], defaultScale: [1.5, 3, 1.5], defaultColor: '#228B22' },
+  { id: 'bush', name: 'Bush', category: 'landscape', description: 'A round bush', icon: '🌳', geometry: 'sphere', geometryArgs: [0.5, 16, 16], defaultScale: [1.2, 0.8, 1.2], defaultColor: '#2d8f2d' },
 ];
 
 export function getAssetById(id: string): AssetDefinition | undefined {
